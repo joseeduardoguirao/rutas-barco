@@ -283,11 +283,10 @@
         .add-reserva-form .form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
         .add-reserva-form input{width:100%;padding:9px 10px;border:2px solid var(--border);border-radius:8px;font-size:13px;background:var(--card);color:var(--text);font-family:inherit;}
         .add-reserva-form input:focus{outline:none;border-color:var(--teal);}
-        .personas-row{display:flex;gap:6px;align-items:center;margin-bottom:10px;}
+        .personas-row{display:flex;gap:8px;align-items:center;margin-bottom:10px;}
         .pers-label{font-size:12px;color:var(--text2);font-weight:600;white-space:nowrap;}
-        .pers-btn{width:40px;height:40px;border:2px solid var(--border);border-radius:9px;background:var(--card);color:var(--text);font-size:15px;font-weight:800;cursor:pointer;transition:all .15s;flex-shrink:0;}
-        .pers-btn.sel{background:var(--navy);color:white;border-color:var(--navy);}
-        .pers-btn:active{transform:scale(.92);}
+        .pers-input{width:80px;padding:10px;border:2px solid var(--border);border-radius:8px;font-size:18px;font-weight:700;text-align:center;background:var(--card);color:var(--text);font-variant-numeric:tabular-nums;}
+        .pers-input:focus{outline:none;border-color:var(--teal);}
 
         /* CANCELADA */
         .turno-card.cancelada{opacity:.75;border-color:#94a3b8;}
@@ -791,7 +790,7 @@ function renderFormulario(){
                     </div>
                     <div class="personas-row">
                         <span class="pers-label">Personas:</span>
-                        <input type="number" min="1" max="30" placeholder="Nº" id="rp-${turno.id}" style="width:72px;padding:9px 10px;border:2px solid var(--border);border-radius:8px;font-size:16px;font-weight:700;text-align:center;background:var(--card);color:var(--text);">
+                        <input type="number" min="1" max="30" placeholder="Nº" id="rp-${turno.id}" class="pers-input">
                     </div>
                     <button class="btn btn-primary btn-wide" onclick="añadirReserva('${turno.id}')">＋ Añadir reserva</button>
                 </div>`}
@@ -929,18 +928,6 @@ async function eliminarTurno(id){
     logHistorial('Turno borrado',`${r.fecha}: ${r.horaInicio}-${r.horaFin}`,r.fecha);
     toast('Turno borrado');
     renderFormulario();
-}
-
-// ── ESTADO TEMPORAL para formulario de reservas ──
-const _persSelec = {}; // turnoId → número de personas seleccionado
-
-function seleccionarPersonas(turnoId, n){
-    _persSelec[turnoId] = n;
-    // Marcar botón seleccionado visualmente
-    [1,2,3,4,5,6,8,10].forEach(x=>{
-        const b=document.getElementById(`pb-${turnoId}-${x}`);
-        if(b) b.classList.toggle('sel', x===n);
-    });
 }
 
 function añadirReserva(turnoId){
