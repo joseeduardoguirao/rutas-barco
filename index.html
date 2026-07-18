@@ -550,7 +550,29 @@
             padding: 14px;
             border-left: 4px solid var(--teal);
             box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: box-shadow .15s, transform .15s;
         }
+
+        .hist-item:hover {
+            box-shadow: var(--shadow2);
+            transform: translateY(-1px);
+        }
+
+        .hist-item:active { transform: scale(.98); }
+
+        .hist-ir {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--teal2);
+            margin-top: 8px;
+        }
+
+        .hist-item.no-link { cursor: default; }
+        .hist-item.no-link:hover { box-shadow: var(--shadow); transform: none; }
 
         .hist-accion { font-weight: 700; font-size: 14px; }
         .hist-detalle { font-size: 13px; color: var(--text2); margin-top: 3px; }
@@ -886,8 +908,8 @@ function migrar() {
     });
 }
 
-function logHistorial(accion, detalles) {
-    historial.unshift({ fecha: new Date().toLocaleString('es-ES'), accion, detalles });
+function logHistorial(accion, detalles, fechaRuta) {
+    historial.unshift({ fecha: new Date().toLocaleString('es-ES'), accion, detalles, fechaRuta: fechaRuta || null });
     if (historial.length > 100) historial.pop();
     guardar();
 }
@@ -1011,7 +1033,7 @@ async function usarPlantilla(fecha) {
     PLANTILLA.forEach(t => {
         rutasData.push({ id: genId(), fecha, horaInicio: t.horaInicio, horaFin: t.horaFin, barcos: 1, ocupadas: 0 });
     });
-    logHistorial('Turnos creados', `${fecha}: 5 turnos estándar`);
+    logHistorial('Turnos creados', `${fecha}: 5 turnos estándar`, fecha);
     toast('Turnos estándar creados ✓');
     renderFormulario();
 }
@@ -1023,7 +1045,7 @@ async function agregarTurno(fecha) {
     const fin = prompt('Hora de fin (se calcula automático, puedes cambiarla):', finAuto);
     if (!fin) return;
     rutasData.push({ id: genId(), fecha, horaInicio: ini, horaFin: fin, barcos: 1, ocupadas: 0 });
-    logHistorial('Turno añadido', `${fecha}: ${ini}-${fin}`);
+    logHistorial('Turno añadido', `${fecha}: ${ini}-${fin}`, fecha);
     toast('Turno añadido ✓');
     renderFormulario();
 }
@@ -1032,7 +1054,7 @@ async function eliminarTurno(id) {
     const r = rutasData.find(x => x.id === id);
     if (!r || !confirm(`¿Borrar el turno ${r.horaInicio}-${r.horaFin}?`)) return;
     rutasData = rutasData.filter(x => x.id !== id);
-    logHistorial('Turno borrado', `${r.fecha}: ${r.horaInicio}-${r.horaFin}`);
+    logHistorial('Turno borrado', `${r.fecha}: ${r.horaInicio}-${r.horaFin}`, r.fecha);
     toast('Turno borrado');
     renderFormulario();
 }
@@ -1045,7 +1067,7 @@ async function updateCampo(id, campo, valor) {
     if (campo === 'horaInicio' && valor) r.horaFin = sumar2h(valor);
     const cap = r.barcos * PLAZAS_POR_BARCO;
     if (r.ocupadas > cap) r.ocupadas = cap;
-    logHistorial(`Actualización`, `${r.fecha} ${r.horaInicio}-${r.horaFin}: ${campo} ${ant}→${r[campo]}`);
+    logHistorial(`Actualización`, `${r.fecha} ${r.horaInicio}-${r.horaFin}: ${campo} ${ant}→${r[campo]}`, r.fecha);
     toast('Guardado ✓');
     renderFormulario();
 }
@@ -1130,7 +1152,7 @@ async function eliminarRuta(id) {
     const r = rutasData.find(x => x.id === id);
     if (!r || !confirm('¿Eliminar esta ruta?')) return;
     rutasData = rutasData.filter(x => x.id !== id);
-    logHistorial('Eliminada', `${r.fecha} ${r.horaInicio}-${r.horaFin}`);
+    logHistorial('Eliminada', `${r.fecha} ${r.horaInicio}-${r.horaFin}`, r.fecha);
     toast('Ruta eliminada');
     renderDashboard();
 }
@@ -1162,25 +1184,42 @@ async function guardarEdicion() {
     r.ocupadas   = parseInt(document.getElementById('mOcupadas').value);
     const cap = r.barcos * PLAZAS_POR_BARCO;
     if (r.ocupadas > cap) r.ocupadas = cap;
-    logHistorial('Edición manual', `${r.fecha} ${r.horaInicio}-${r.horaFin}`);
+    logHistorial('Edición manual', `${r.fecha} ${r.horaInicio}-${r.horaFin}`, r.fecha);
     cerrarModal();
     toast('Guardado ✓');
     renderDashboard();
 }
 
 // ── HISTORIAL ──
+function irAFecha(fecha) {
+    document.getElementById('fechaInput').value = fecha;
+    const btn = document.querySelector('.tab-btn');
+    cambiarTab('angel', btn);
+    renderFormulario();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 function renderHistorial() {
     const el = document.getElementById('histList');
     if (historial.length === 0) {
         el.innerHTML = '<p style="color:var(--text2);font-size:14px;text-align:center;padding:32px">Sin cambios registrados</p>';
         return;
     }
-    el.innerHTML = `<div class="hist-list">${historial.map(h => `
-        <div class="hist-item">
+    el.innerHTML = `<div class="hist-list">${historial.map(h => {
+        const clickable = !!h.fechaRuta;
+        const onclick = clickable ? `onclick="irAFecha('${h.fechaRuta}')"` : '';
+        const cls = clickable ? '' : 'no-link';
+        const fechaFormato = h.fechaRuta
+            ? new Date(h.fechaRuta + 'T12:00:00').toLocaleDateString('es-ES', { weekday:'short', day:'numeric', month:'short', year:'numeric' })
+            : '';
+        return `
+        <div class="hist-item ${cls}" ${onclick}>
             <div class="hist-accion">${h.accion}</div>
             <div class="hist-detalle">${h.detalles}</div>
             <div class="hist-fecha">${h.fecha}</div>
-        </div>`).join('')}</div>`;
+            ${clickable ? `<div class="hist-ir">✏️ Ir a editar · ${fechaFormato} →</div>` : ''}
+        </div>`;
+    }).join('')}</div>`;
 }
 
 // ── PWA ──
