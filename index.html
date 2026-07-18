@@ -584,8 +584,9 @@ class TimePicker {
 
     confirm() {
         const val = `${this._read('tpH', this.HOURS)}:${this._read('tpM', this.MINS)}`;
-        if (this.cb) this.cb(val);
+        const cb = this.cb;
         this.close();
+        if (cb) cb(val);
     }
 
     close() {
