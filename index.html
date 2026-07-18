@@ -354,6 +354,19 @@
         @keyframes syncpulse{0%,100%{opacity:1}50%{opacity:.3}}
         .sync-label{font-size:11px;opacity:.6;color:white;white-space:nowrap;}
 
+        /* ── CONTROL REDISEÑADO ── */
+        .ctrl-topbar{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap;}
+        .ctrl-topbar .date-input{flex:1;min-width:140px;}
+        .ctrl-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--border);margin-bottom:14px;}
+        .ctrl-pas-header{display:flex;align-items:center;justify-content:space-between;margin:14px 0 8px;}
+        .ctrl-pasajeros{display:flex;flex-direction:column;gap:6px;}
+        .ctrl-pasajero{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border-radius:10px;border:1px solid var(--border);}
+        .ctrl-pas-info{flex:1;min-width:0;}
+        .ctrl-pas-nombre{font-size:15px;font-weight:700;}
+        .ctrl-pas-tel{font-size:13px;color:var(--text2);margin-top:2px;}
+        .ctrl-pas-num{background:var(--navy);color:white;border-radius:20px;padding:4px 12px;font-size:14px;font-weight:700;flex-shrink:0;}
+        .ctrl-ti-row{background:#0e4f6e22;border:1px solid #0e749044;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:14px;color:#0e7490;}
+
         /* ── TERRITORIO INDALO ── */
         .ti-toggle{width:100%;padding:10px;border:2px solid var(--border);border-radius:9px;background:var(--bg);color:var(--text2);font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px;transition:all .2s;font-family:inherit;}
         .ti-toggle.ti-on{background:#0e4f6e;border-color:#0e7490;color:white;}
@@ -479,37 +492,18 @@
 <!-- TAB EDU -->
 <div id="edu" class="content">
     <div class="inner">
-        <p class="section-title">Dashboard</p>
+        <p class="section-title">Control</p>
+        <div class="ctrl-topbar">
+            <input type="date" id="filtroFecha" class="date-input" onchange="renderDashboard()">
+            <button class="btn wa-btn btn-sm" onclick="abrirModalWA()">📲 WhatsApp</button>
+        </div>
         <div class="kpi-row">
-            <div class="kpi-card"><div class="kpi-label">Rutas</div><div class="kpi-value" id="kpiRutas">0</div></div>
-            <div class="kpi-card"><div class="kpi-label">Disponibles</div><div class="kpi-value" id="kpiDisp">0</div></div>
-            <div class="kpi-card"><div class="kpi-label">Ocupadas</div><div class="kpi-value" id="kpiOcup">0</div></div>
-            <div class="kpi-card"><div class="kpi-label">Ocupación</div><div class="kpi-value" id="kpiTasa">0%</div></div>
+            <div class="kpi-card"><div class="kpi-label">Turnos</div><div class="kpi-value" id="kpiRutas">0</div></div>
+            <div class="kpi-card"><div class="kpi-label">Plazas libres</div><div class="kpi-value" id="kpiDisp">0</div></div>
+            <div class="kpi-card"><div class="kpi-label">Personas</div><div class="kpi-value" id="kpiOcup">0</div></div>
+            <div class="kpi-card"><div class="kpi-label">Terr. Indalo</div><div class="kpi-value" id="kpiTI" style="font-size:22px;">0p</div></div>
         </div>
-        <div class="filters">
-            <div class="filter-group">
-                <label>Fecha</label>
-                <input type="date" id="filtroFecha" onchange="renderTabla()">
-            </div>
-            <div class="filter-group">
-                <label>Estado</label>
-                <select id="filtroEstado" onchange="renderTabla()">
-                    <option value="">Todas</option>
-                    <option value="libre">Con plazas</option>
-                    <option value="pocos">Pocos huecos (≤3)</option>
-                    <option value="lleno">Lleno</option>
-                </select>
-            </div>
-        </div>
-        <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
-            <button class="btn wa-btn btn-sm" onclick="abrirModalWA()">📲 Exportar WhatsApp</button>
-        </div>
-        <div class="table-wrap">
-            <table>
-                <thead><tr><th>Fecha</th><th>Horario</th><th>Barcos</th><th>Libre/Total</th><th>Estado</th><th>Reservas</th><th></th></tr></thead>
-                <tbody id="tablaBody"><tr><td colspan="8" class="table-empty">Cargando…</td></tr></tbody>
-            </table>
-        </div>
+        <div id="ctrlTurnos"></div>
     </div>
 </div>
 
@@ -1097,71 +1091,80 @@ async function updateCampo(id,campo,valor){
 
 // ── DASHBOARD ──
 function renderDashboard(){
-    // filtro de hoy por defecto si no hay nada seleccionado
     const ff=document.getElementById('filtroFecha');
     if(!ff.value) ff.value=hoy();
+    const fecha=ff.value;
 
-    let totalR=0,totalO=0,totalD=0;
-    rutasData.forEach(r=>{
-        totalR++;
-        totalO+=r.ocupadas;
-        totalD+=(r.barcos*PLAZAS_POR_BARCO)-r.ocupadas;
-    });
-    const cap=rutasData.reduce((s,r)=>s+r.barcos*PLAZAS_POR_BARCO,0);
-    const tasa=cap>0?Math.round((totalO/cap)*100):0;
-    document.getElementById('kpiRutas').textContent=totalR;
-    document.getElementById('kpiDisp').textContent=totalD;
-    document.getElementById('kpiOcup').textContent=totalO;
-    document.getElementById('kpiTasa').textContent=tasa+'%';
-    renderTabla();
-}
+    const turnos=rutasData.filter(r=>r.fecha===fecha).sort((a,b)=>a.horaInicio.localeCompare(b.horaInicio));
+    const totalPlazas=turnos.reduce((s,r)=>s+r.barcos*PLAZAS_POR_BARCO,0);
+    const totalOcup=turnos.reduce((s,r)=>s+r.ocupadas,0);
+    const totalLibres=Math.max(0,totalPlazas-totalOcup);
+    const totalTI=turnos.reduce((s,r)=>s+(r.reservas||[]).filter(rv=>rv.territorioIndalo).reduce((a,rv)=>a+rv.personas,0),0);
 
-function renderTabla(){
-    const ff=document.getElementById('filtroFecha').value;
-    const fe=document.getElementById('filtroEstado').value;
-    let rows=rutasData.filter(r=>{
-        if(ff&&r.fecha!==ff) return false;
-        const cap=r.barcos*PLAZAS_POR_BARCO, lib=cap-r.ocupadas;
-        if(fe==='libre'&&lib===0) return false;
-        if(fe==='lleno'&&lib>0)  return false;
-        if(fe==='pocos'&&lib>3)  return false;
-        return true;
-    }).sort((a,b)=>a.fecha.localeCompare(b.fecha)||a.horaInicio.localeCompare(b.horaInicio));
+    document.getElementById('kpiRutas').textContent=turnos.length;
+    document.getElementById('kpiDisp').textContent=totalLibres;
+    document.getElementById('kpiOcup').textContent=totalOcup;
+    document.getElementById('kpiTI').textContent=totalTI+'p';
 
-    const tbody=document.getElementById('tablaBody');
-    if(!rows.length){ tbody.innerHTML='<tr><td colspan="8" class="table-empty">Sin resultados</td></tr>'; return; }
+    const contenedor=document.getElementById('ctrlTurnos');
+    if(!turnos.length){
+        contenedor.innerHTML='<div class="empty-state"><p>No hay turnos para este día.</p></div>';
+        return;
+    }
 
-    tbody.innerHTML=rows.map(r=>{
-        const cap=r.barcos*PLAZAS_POR_BARCO, lib=cap-r.ocupadas;
+    const avatarColors=['av0','av1','av2','av3','av4','av5'];
+    const avatar=(nombre,i)=>`<div class="res-avatar ${avatarColors[i%6]}">${(nombre||'?')[0].toUpperCase()}</div>`;
+
+    contenedor.innerHTML=turnos.map(r=>{
+        const cap=r.barcos*PLAZAS_POR_BARCO;
+        const lib=cap-r.ocupadas;
+        const sobre=lib<0;
         const pct=Math.min(Math.round((r.ocupadas/cap)*100),100);
-        const cls=r.cancelada?'cancel':lib<=0?'red':lib<=3?'amber':'green';
-        const lbl=r.cancelada?'🌊 Cancelada':lib<=0?'✕ Lleno':lib<=3?'⚠ Pocos':'✓ Libre';
-        const fecha=new Date(r.fecha+'T12:00:00').toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'});
-        const reservasHtml=(r.reservas||[]).map(rv=>`
-            <div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--border);">
-                <div style="flex:1;min-width:0;">
-                    <div style="font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${rv.nombre}</div>
-                    <div style="font-size:11px;color:var(--text2)">${rv.telefono||'—'}</div>
+        const cls=r.cancelada?'cancelada':sobre?'sobre':lib===0?'lleno':lib<=3?'pocos':'libre';
+        const headCls=r.cancelada?'cancelada':cls;
+        const label=r.cancelada?'🌊 Cancelada':sobre?'⛔ Sobreocupado':lib===0?'✕ Lleno':lib<=3?`⚠ ${lib} hueco${lib!==1?'s':''}`:`✓ ${lib} libre${lib!==1?'s':''}`;
+        const tiCount=(r.reservas||[]).filter(rv=>rv.territorioIndalo).reduce((s,rv)=>s+rv.personas,0);
+
+        const pasajeros=(r.reservas||[]).length
+            ?(r.reservas||[]).map((rv,i)=>`
+                <div class="ctrl-pasajero">
+                    ${avatar(rv.nombre,i)}
+                    <div class="ctrl-pas-info">
+                        <div class="ctrl-pas-nombre">${rv.nombre||'Sin nombre'}${rv.territorioIndalo?` <span class="ti-badge">TI</span>`:''}</div>
+                        <div class="ctrl-pas-tel">${rv.telefono||'Sin teléfono'}</div>
+                    </div>
+                    <span class="ctrl-pas-num">${rv.personas}p</span>
+                </div>`).join('')
+            :`<p class="res-empty">Sin reservas aún</p>`;
+
+        return `
+        <div class="ctrl-card">
+            <div class="tc-head ${headCls}">
+                <div>
+                    <div class="tc-hora">${r.horaInicio} – ${r.horaFin}</div>
+                    <small style="opacity:.7;font-size:13px;color:white;display:block;margin-top:3px;">🚤 ${r.barcos} barco${r.barcos>1?'s':''} · ${cap} plazas</small>
                 </div>
-                <span style="background:var(--navy);color:white;border-radius:20px;padding:2px 7px;font-size:11px;font-weight:700;white-space:nowrap;flex-shrink:0">${rv.personas}p</span>
-            </div>`).join('');
-        return `<tr>
-            <td><strong>${fecha}</strong></td>
-            <td style="white-space:nowrap">${r.horaInicio} – ${r.horaFin}</td>
-            <td>${r.barcos}</td>
-            <td style="white-space:nowrap"><strong>${lib}</strong> / ${cap}
-                <div class="mini-bar"><div class="mini-fill" style="width:${pct}%"></div></div>
-            </td>
-            <td><span class="pill pill-${cls}">${lbl}</span></td>
-            <td style="min-width:160px;max-width:220px">
-                ${reservasHtml||'<span style="font-size:11px;color:var(--text2)">Sin reservas</span>'}
-                ${r.notas?`<div style="font-size:11px;color:var(--amber);margin-top:4px">📝 ${r.notas}</div>`:''}
-            </td>
-            <td><div class="row-actions">
-                <button class="btn btn-ghost btn-sm" onclick="abrirModalEditar('${r.id}')">Editar</button>
-                <button class="btn btn-danger btn-sm" onclick="eliminarRuta('${r.id}')">✕</button>
-            </div></td>
-        </tr>`;
+                <div style="text-align:right;">
+                    <div class="tc-libre-num">${sobre?'−'+Math.abs(lib):lib}</div>
+                    <div class="tc-libre-lbl">${sobre?'de más':'libres'}</div>
+                    <div class="tc-pill" style="margin-top:6px;">${label}</div>
+                </div>
+            </div>
+            <div class="tc-body">
+                ${r.cancelada?'<div class="cancelada-banner">🌊 Ruta cancelada por mal tiempo</div>':''}
+                <div class="ocu-row">
+                    <div class="ocu-bar"><div class="ocu-fill ${cls}" style="width:${pct}%"></div></div>
+                    <span class="ocu-nums">${r.ocupadas} / ${cap} personas</span>
+                </div>
+                ${tiCount?`<div class="ctrl-ti-row">🌊 <strong>${tiCount} persona${tiCount!==1?'s':''}</strong> de Territorio Indalo</div>`:''}
+                <div class="ctrl-pas-header">
+                    <span class="res-title">Pasajeros</span>
+                    ${(r.reservas||[]).length?`<span class="res-badge">${(r.reservas||[]).length} reserva${(r.reservas||[]).length!==1?'s':''}</span>`:''}
+                </div>
+                <div class="ctrl-pasajeros">${pasajeros}</div>
+                ${r.notas?`<div class="tc-nota" style="margin-top:10px;">📝 ${r.notas}</div>`:''}
+            </div>
+        </div>`;
     }).join('');
 }
 
