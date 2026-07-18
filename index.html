@@ -911,13 +911,12 @@ async function copiarDiaAnterior(fecha){
 
 function agregarTurno(fecha){
     tp.open('09:00', ini => {
-        tp.open(sumar2h(ini), fin => {
-            rutasData.push({id:genId(),fecha,horaInicio:ini,horaFin:fin,barcos:1,ocupadas:0,notas:''});
-            logHistorial('Turno añadido',`${fecha}: ${ini}-${fin}`,fecha);
-            guardar();
-            toast('Turno añadido ✓');
-            renderFormulario();
-        }, 'Hora de fin');
+        const fin=sumar2h(ini);
+        rutasData.push({id:genId(),fecha,horaInicio:ini,horaFin:fin,barcos:1,ocupadas:0,notas:'',reservas:[]});
+        logHistorial('Turno añadido',`${fecha}: ${ini}-${fin}`,fecha);
+        guardar();
+        toast('Turno añadido ✓');
+        renderFormulario();
     }, 'Hora de inicio');
 }
 
