@@ -839,11 +839,21 @@
 const PLAZAS_POR_BARCO = 12;
 const PLANTILLA = [
     { horaInicio:'09:00', horaFin:'11:00' },
+    { horaInicio:'10:00', horaFin:'12:00' },
     { horaInicio:'11:00', horaFin:'13:00' },
+    { horaInicio:'12:00', horaFin:'14:00' },
     { horaInicio:'13:00', horaFin:'15:00' },
+    { horaInicio:'14:00', horaFin:'16:00' },
     { horaInicio:'16:00', horaFin:'18:00' },
+    { horaInicio:'17:00', horaFin:'19:00' },
     { horaInicio:'18:00', horaFin:'20:00' },
+    { horaInicio:'19:00', horaFin:'21:00' },
 ];
+
+function sumar2h(hora) {
+    const [h, m] = hora.split(':').map(Number);
+    return String(h + 2).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+}
 
 // ── ESTADO ──
 let rutasData = [];
@@ -1009,7 +1019,8 @@ async function usarPlantilla(fecha) {
 async function agregarTurno(fecha) {
     const ini = prompt('Hora de inicio (ej: 10:00):', '09:00');
     if (!ini) return;
-    const fin = prompt('Hora de fin (ej: 12:00):', '11:00');
+    const finAuto = sumar2h(ini);
+    const fin = prompt('Hora de fin (se calcula automático, puedes cambiarla):', finAuto);
     if (!fin) return;
     rutasData.push({ id: genId(), fecha, horaInicio: ini, horaFin: fin, barcos: 1, ocupadas: 0 });
     logHistorial('Turno añadido', `${fecha}: ${ini}-${fin}`);
@@ -1031,6 +1042,7 @@ async function updateCampo(id, campo, valor) {
     if (!r) return;
     const ant = r[campo];
     r[campo] = (campo === 'barcos' || campo === 'ocupadas') ? parseInt(valor) : valor;
+    if (campo === 'horaInicio' && valor) r.horaFin = sumar2h(valor);
     const cap = r.barcos * PLAZAS_POR_BARCO;
     if (r.ocupadas > cap) r.ocupadas = cap;
     logHistorial(`Actualización`, `${r.fecha} ${r.horaInicio}-${r.horaFin}: ${campo} ${ant}→${r[campo]}`);
