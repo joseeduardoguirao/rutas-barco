@@ -354,6 +354,11 @@
         @keyframes syncpulse{0%,100%{opacity:1}50%{opacity:.3}}
         .sync-label{font-size:11px;opacity:.6;color:white;white-space:nowrap;}
 
+        /* ── TERRITORIO INDALO ── */
+        .ti-toggle{width:100%;padding:10px;border:2px solid var(--border);border-radius:9px;background:var(--bg);color:var(--text2);font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px;transition:all .2s;font-family:inherit;}
+        .ti-toggle.ti-on{background:#0e4f6e;border-color:#0e7490;color:white;}
+        .ti-badge{display:inline-block;background:#0e7490;color:white;font-size:11px;font-weight:800;padding:1px 6px;border-radius:6px;vertical-align:middle;margin-left:4px;letter-spacing:.5px;}
+
         /* ── FUENTES MÁS GRANDES ── */
         .header-text h1{font-size:26px;}
         .header-text p{font-size:16px;}
@@ -881,7 +886,7 @@ function renderFormulario(){
                 <div class="res-item">
                     ${avatar(rv.nombre,i)}
                     <div class="res-info">
-                        <div class="res-nombre">${rv.nombre||'Sin nombre'}</div>
+                        <div class="res-nombre">${rv.nombre||'Sin nombre'}${rv.territorioIndalo?` <span class="ti-badge">TI</span>`:''}</div>
                         <div class="res-tel">${rv.telefono||'Sin teléfono'}</div>
                     </div>
                     <span class="res-pers">${rv.personas}p</span>
@@ -896,6 +901,9 @@ function renderFormulario(){
                     <div class="res-form-grid solo" style="margin-bottom:10px;">
                         <input type="tel" placeholder="Nº personas" id="rp-${turno.id}" inputmode="numeric" pattern="[0-9]*">
                     </div>
+                    <button type="button" class="ti-toggle" id="ti-${turno.id}" onclick="this.classList.toggle('ti-on')">
+                        🌊 Territorio Indalo
+                    </button>
                     <button class="btn btn-primary btn-wide" onclick="añadirReserva('${turno.id}')">＋ Añadir reserva</button>
                 </div>`;
             return `
@@ -1050,8 +1058,9 @@ function añadirReserva(turnoId){
     const personas=parseInt(document.getElementById('rp-'+turnoId)?.value)||0;
     if(!nombre){ toast('Escribe un nombre'); return; }
     if(!personas||personas<1){ toast('Indica el número de personas'); return; }
+    const territorioIndalo = document.getElementById('ti-'+turnoId)?.classList.contains('ti-on') || false;
     if(!r.reservas) r.reservas=[];
-    r.reservas.push({id:genId(), nombre, telefono, personas});
+    r.reservas.push({id:genId(), nombre, telefono, personas, territorioIndalo});
     r.ocupadas = r.reservas.reduce((s,rv)=>s+(rv.personas||0),0);
     guardar();
     logHistorial('Reserva añadida',`${nombre} (${personas}p) · ${r.fecha} ${r.horaInicio}-${r.horaFin}`,r.fecha);
