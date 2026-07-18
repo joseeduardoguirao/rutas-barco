@@ -537,13 +537,15 @@ class TimePicker {
         this.MINS  = ['00','15','30','45'];
     }
 
-    open(val, cb) {
+    open(val, cb, titulo) {
         this.cb = cb;
         const [h, m] = (val || '09:00').split(':');
         const hi = Math.max(0, this.HOURS.indexOf(h));
         const mi = Math.max(0, this.MINS.findIndex(x => x === m));
         this._fill('tpH', this.HOURS, hi);
         this._fill('tpM', this.MINS,  mi < 0 ? 0 : mi);
+        const tEl = document.querySelector('.tp-header span');
+        if (tEl) tEl.textContent = titulo || 'Seleccionar hora';
         document.getElementById('tpOverlay').classList.add('active');
     }
 
@@ -848,16 +850,16 @@ async function copiarDiaAnterior(fecha){
     renderFormulario();
 }
 
-async function agregarTurno(fecha){
-    const ini=prompt('Hora de inicio (ej: 10:00):','09:00');
-    if(!ini) return;
-    const finAuto=sumar2h(ini);
-    const fin=prompt('Hora de fin:',finAuto);
-    if(!fin) return;
-    rutasData.push({id:genId(),fecha,horaInicio:ini,horaFin:fin,barcos:1,ocupadas:0,notas:''});
-    logHistorial('Turno añadido',`${fecha}: ${ini}-${fin}`,fecha);
-    toast('Turno añadido ✓');
-    renderFormulario();
+function agregarTurno(fecha){
+    tp.open('09:00', ini => {
+        tp.open(sumar2h(ini), fin => {
+            rutasData.push({id:genId(),fecha,horaInicio:ini,horaFin:fin,barcos:1,ocupadas:0,notas:''});
+            logHistorial('Turno añadido',`${fecha}: ${ini}-${fin}`,fecha);
+            guardar();
+            toast('Turno añadido ✓');
+            renderFormulario();
+        }, 'Hora de fin');
+    }, 'Hora de inicio');
 }
 
 async function eliminarTurno(id){
