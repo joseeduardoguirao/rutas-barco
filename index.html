@@ -268,25 +268,71 @@
         .time-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border:2px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:15px;font-weight:700;cursor:pointer;font-variant-numeric:tabular-nums;transition:border-color .2s;}
         .time-btn:hover,.time-btn:active{border-color:var(--teal);background:var(--card);}
 
+        /* ── TARJETA REDISEÑADA ── */
+        .tc-head{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+        .tc-head.libre   {background:linear-gradient(135deg,#0a2540 0%,#163860 100%);}
+        .tc-head.pocos   {background:linear-gradient(135deg,#78350f 0%,#b45309 100%);}
+        .tc-head.lleno   {background:linear-gradient(135deg,#7f1d1d 0%,#b91c1c 100%);}
+        .tc-head.sobre   {background:linear-gradient(135deg,#4c0519 0%,#9f1239 100%);}
+        .tc-head.cancelada{background:linear-gradient(135deg,#334155 0%,#475569 100%);}
+        .tc-hora{font-size:20px;font-weight:800;color:white;letter-spacing:-.4px;line-height:1;}
+        .tc-hora small{font-size:12px;font-weight:500;opacity:.65;display:block;margin-top:1px;}
+        .tc-status{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+        .tc-libre-num{font-size:26px;font-weight:800;color:white;line-height:1;font-variant-numeric:tabular-nums;}
+        .tc-libre-lbl{font-size:10px;font-weight:600;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.4px;}
+        .tc-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(255,255,255,.15);color:white;}
+
+        .tc-body{padding:14px 16px;}
+
+        /* Barra ocupación */
+        .ocu-row{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+        .ocu-bar{flex:1;height:10px;background:var(--border);border-radius:5px;overflow:hidden;}
+        .ocu-fill{height:100%;border-radius:5px;transition:width .4s;}
+        .ocu-fill.libre {background:linear-gradient(90deg,#059669,#34d399);}
+        .ocu-fill.pocos {background:linear-gradient(90deg,#d97706,#fbbf24);}
+        .ocu-fill.lleno {background:#dc2626;}
+        .ocu-fill.sobre {background:#9f1239;}
+        .ocu-nums{font-size:12px;font-weight:700;color:var(--text2);white-space:nowrap;font-variant-numeric:tabular-nums;}
+
+        /* Edición horario/barcos (modo completo) */
+        .tc-edit-row{display:flex;gap:8px;margin-bottom:12px;}
+        .tc-edit-row .field-group{flex:1;}
+        .tc-edit-row label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);display:block;margin-bottom:4px;}
+
         /* RESERVAS */
-        .reservas-section{margin-top:12px;border-top:1px solid var(--border);padding-top:12px;}
-        .reservas-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
-        .reservas-count{background:var(--teal2);color:white;border-radius:20px;padding:2px 8px;font-size:11px;}
-        .reserva-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg);border-radius:9px;margin-bottom:6px;border:1px solid var(--border);}
-        .reserva-info{flex:1;min-width:0;}
-        .reserva-nombre{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-        .reserva-tel{font-size:12px;color:var(--text2);}
-        .reserva-pers{background:var(--navy);color:white;border-radius:20px;padding:3px 9px;font-size:12px;font-weight:700;white-space:nowrap;flex-shrink:0;}
-        .reserva-del{background:none;border:none;color:var(--text2);cursor:pointer;font-size:16px;padding:4px;border-radius:6px;flex-shrink:0;line-height:1;}
-        .reserva-del:hover{color:var(--red);background:var(--redb);}
-        .add-reserva-form{background:var(--bg);border:1.5px dashed var(--border);border-radius:10px;padding:12px;margin-top:6px;}
-        .add-reserva-form .form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
-        .add-reserva-form input{width:100%;padding:9px 10px;border:2px solid var(--border);border-radius:8px;font-size:16px;background:var(--card);color:var(--text);font-family:inherit;}
-        .add-reserva-form input:focus{outline:none;border-color:var(--teal);}
-        .personas-row{display:flex;gap:8px;align-items:center;margin-bottom:10px;}
-        .pers-label{font-size:12px;color:var(--text2);font-weight:600;white-space:nowrap;}
-        .pers-input{width:80px;padding:10px;border:2px solid var(--border);border-radius:8px;font-size:18px;font-weight:700;text-align:center;background:var(--card);color:var(--text);font-variant-numeric:tabular-nums;}
-        .pers-input:focus{outline:none;border-color:var(--teal);}
+        .res-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+        .res-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);}
+        .res-badge{background:var(--navy);color:white;border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700;}
+        .res-item{display:flex;align-items:center;gap:10px;padding:9px 10px;background:var(--bg);border-radius:10px;margin-bottom:6px;border:1px solid var(--border);}
+        .res-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:white;flex-shrink:0;}
+        .res-info{flex:1;min-width:0;}
+        .res-nombre{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .res-tel{font-size:11px;color:var(--text2);margin-top:1px;}
+        .res-pers{background:var(--navy);color:white;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700;flex-shrink:0;}
+        .res-del{background:none;border:none;color:var(--text2);cursor:pointer;font-size:18px;padding:4px 6px;border-radius:6px;flex-shrink:0;line-height:1;}
+        .res-del:hover{color:var(--red);background:var(--redb);}
+        .res-empty{font-size:12px;color:var(--text2);text-align:center;padding:10px 0 6px;font-style:italic;}
+
+        /* Formulario añadir reserva */
+        .add-res-form{background:var(--bg);border:1.5px dashed var(--border);border-radius:12px;padding:12px;margin-top:8px;}
+        .add-res-form .res-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+        .add-res-form .res-form-grid.solo{grid-template-columns:1fr;}
+        .add-res-form input{width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:9px;font-size:16px;background:var(--card);color:var(--text);font-family:inherit;transition:border-color .2s;}
+        .add-res-form input:focus{outline:none;border-color:var(--teal);background:var(--card);}
+        .add-res-form input::placeholder{color:var(--text2);opacity:.7;}
+
+        /* Acciones bottom */
+        .tc-actions{display:flex;gap:8px;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+        .tc-actions .saved-tick{margin-left:auto;font-size:12px;font-weight:700;color:var(--green);opacity:0;transition:opacity .3s;}
+        .tc-actions .saved-tick.show{opacity:1;}
+
+        /* Nota inline */
+        .tc-nota{font-size:12px;color:var(--amber);background:var(--amberb);border-radius:8px;padding:6px 10px;margin-top:10px;display:flex;gap:6px;align-items:flex-start;}
+        .tc-nota textarea{width:100%;background:transparent;border:none;font-size:13px;color:var(--text);font-family:inherit;resize:none;outline:none;min-height:36px;}
+
+        /* Avatar colors */
+        .av0{background:#0e7490;} .av1{background:#0369a1;} .av2{background:#7c3aed;}
+        .av3{background:#db2777;} .av4{background:#059669;} .av5{background:#d97706;}
 
         /* CANCELADA */
         .turno-card.cancelada{opacity:.75;border-color:#94a3b8;}
@@ -765,62 +811,67 @@ function renderFormulario(){
             ?`<button class="btn btn-reactivar btn-sm" onclick="toggleCancelada('${r.id}')">✓ Reactivar ruta</button>`
             :`<button class="btn btn-cancelar btn-sm" onclick="toggleCancelada('${r.id}')">🌊 Mal tiempo</button>`;
 
+        const headCls = r.cancelada?'cancelada':cls;
+        const avatarColors = ['av0','av1','av2','av3','av4','av5'];
+        const avatar = (nombre,i) => `<div class="res-avatar ${avatarColors[i%6]}">${(nombre||'?')[0].toUpperCase()}</div>`;
+
         const bloqueReservas = (turno, cancelada) => {
-            const lista = (turno.reservas||[]).map(rv=>`
-                <div class="reserva-item">
-                    <div class="reserva-info">
-                        <div class="reserva-nombre">${rv.nombre||'Sin nombre'}</div>
-                        <div class="reserva-tel">${rv.telefono||'—'}</div>
+            const lista = (turno.reservas||[]).map((rv,i)=>`
+                <div class="res-item">
+                    ${avatar(rv.nombre,i)}
+                    <div class="res-info">
+                        <div class="res-nombre">${rv.nombre||'Sin nombre'}</div>
+                        <div class="res-tel">${rv.telefono||'Sin teléfono'}</div>
                     </div>
-                    <span class="reserva-pers">${rv.personas} pers.</span>
-                    <button class="reserva-del" onclick="borrarReserva('${turno.id}','${rv.id}')" title="Eliminar reserva">✕</button>
+                    <span class="res-pers">${rv.personas}p</span>
+                    <button class="res-del" onclick="borrarReserva('${turno.id}','${rv.id}')" title="Eliminar">✕</button>
                 </div>`).join('');
-            return `
-            <div class="reservas-section">
-                <div class="reservas-title">
-                    <span>Reservas</span>
-                    ${turno.reservas?.length?`<span class="reservas-count">${turno.reservas.length} reserva${turno.reservas.length!==1?'s':''}</span>`:''}
-                </div>
-                ${lista||'<p style="font-size:12px;color:var(--text2);margin-bottom:8px;">Sin reservas aún</p>'}
-                ${cancelada?'':`
-                <div class="add-reserva-form">
-                    <div class="form-row">
-                        <input type="text" placeholder="Nombre" id="rn-${turno.id}" autocomplete="off">
-                        <input type="tel" placeholder="Teléfono" id="rt-${turno.id}" autocomplete="off">
+            const form = cancelada?'': `
+                <div class="add-res-form">
+                    <div class="res-form-grid">
+                        <input type="text"  placeholder="Nombre"   id="rn-${turno.id}" autocomplete="off">
+                        <input type="tel"   placeholder="Teléfono" id="rt-${turno.id}" autocomplete="off">
                     </div>
-                    <div class="form-row">
-                        <input type="tel" placeholder="Personas" id="rp-${turno.id}" class="pers-input" style="width:100%">
+                    <div class="res-form-grid solo" style="margin-bottom:10px;">
+                        <input type="tel" placeholder="Nº personas" id="rp-${turno.id}" inputmode="numeric" pattern="[0-9]*">
                     </div>
                     <button class="btn btn-primary btn-wide" onclick="añadirReserva('${turno.id}')">＋ Añadir reserva</button>
-                </div>`}
+                </div>`;
+            return `
+            <div style="margin-top:14px;">
+                <div class="res-header">
+                    <span class="res-title">Reservas</span>
+                    ${turno.reservas?.length?`<span class="res-badge">${turno.reservas.length} · ${turno.ocupadas} pers.</span>`:''}
+                </div>
+                ${lista||`<p class="res-empty">Sin reservas aún</p>`}
+                ${form}
             </div>`;
         };
 
         if(modoRapido){
             html+=`
             <div class="turno-card ${cardCls}" id="card-${r.id}">
-                <div class="turno-card-head">
-                    <span class="turno-hora">${r.horaInicio} – ${r.horaFin}</span>
-                    <span class="turno-barcos-badge">🚤 ${r.barcos} · ${r.ocupadas}/${cap}</span>
+                <div class="tc-head ${headCls}">
+                    <div class="tc-hora">
+                        ${r.horaInicio} – ${r.horaFin}
+                        <small>🚤 ${r.barcos} barco${r.barcos>1?'s':''}</small>
+                    </div>
+                    <div class="tc-status">
+                        <div class="tc-libre-num">${sobre?'−'+Math.abs(lib):lib}</div>
+                        <div class="tc-libre-lbl">${sobre?'de más':'libres'}</div>
+                    </div>
                 </div>
-                <div class="turno-body">
+                <div class="tc-body">
                     ${cancelBanner}
-                    <div class="plazas-meter" style="margin-bottom:4px;">
-                        <div class="plazas-meter-top">
-                            <div>
-                                <div class="plazas-disponibles" style="color:${sobre?'var(--red)':cls==='libre'?'var(--green)':cls==='pocos'?'var(--amber)':'var(--red)'}">${lib}</div>
-                                <div class="plazas-label">${sobre?'de más':'plazas libres'}</div>
-                            </div>
-                            <div class="plazas-total">de ${cap} total</div>
-                        </div>
-                        <div class="bar-track"><div class="bar-fill ${cls}" style="width:${pct}%"></div></div>
-                        <span class="estado-pill ${cls}">${label}</span>
+                    <div class="ocu-row">
+                        <div class="ocu-bar"><div class="ocu-fill ${cls}" style="width:${pct}%"></div></div>
+                        <span class="ocu-nums">${r.ocupadas}/${cap}</span>
                     </div>
                     ${bloqueReservas(r, r.cancelada)}
-                    ${notaBadge}
-                    <div class="turno-actions" style="margin-top:10px;">
+                    ${r.notas?`<div class="tc-nota">📝 ${r.notas}</div>`:''}
+                    <div class="tc-actions">
                         ${cancelBtn}
-                        <button class="btn btn-ghost btn-sm" onclick="abrirModalEditar('${r.id}')">Editar</button>
+                        <button class="btn btn-ghost btn-sm" onclick="abrirModalEditar('${r.id}')">✏️ Editar</button>
                         <span class="saved-tick" id="tick-${r.id}">✓ Guardado</span>
                     </div>
                 </div>
@@ -828,42 +879,44 @@ function renderFormulario(){
         } else {
             html+=`
             <div class="turno-card ${cardCls}" id="card-${r.id}">
-                <div class="turno-card-head">
-                    <span class="turno-hora">${r.horaInicio} – ${r.horaFin}</span>
-                    <span class="turno-barcos-badge">🚤 ${r.barcos} barco${r.barcos>1?'s':''}</span>
+                <div class="tc-head ${headCls}">
+                    <div class="tc-hora">
+                        ${r.horaInicio} – ${r.horaFin}
+                        <small>🚤 ${r.barcos} barco${r.barcos>1?'s':''}</small>
+                    </div>
+                    <div class="tc-status">
+                        <div class="tc-libre-num">${sobre?'−'+Math.abs(lib):lib}</div>
+                        <div class="tc-libre-lbl">${sobre?'de más':'libres'}</div>
+                        <span class="tc-pill">${label}</span>
+                    </div>
                 </div>
-                <div class="turno-body">
+                <div class="tc-body">
                     ${cancelBanner}
-                    <div style="${r.cancelada?'opacity:.4;pointer-events:none':''}">
-                    <div class="field-row">
-                        <div class="field-group"><label>Inicio</label>
+                    <div class="ocu-row">
+                        <div class="ocu-bar"><div class="ocu-fill ${cls}" style="width:${pct}%"></div></div>
+                        <span class="ocu-nums">${r.ocupadas} / ${cap}</span>
+                    </div>
+                    <div class="tc-edit-row" style="${r.cancelada?'opacity:.4;pointer-events:none':''}">
+                        <div class="field-group">
+                            <label>Inicio</label>
                             <button class="time-btn" onclick="tp.open('${r.horaInicio}', v=>updateCampo('${r.id}','horaInicio',v))">
-                                <span class="time-icon">🕐</span>${r.horaInicio}</button></div>
-                        <div class="field-group"><label>Fin</label>
-                            <button class="time-btn" onclick="tp.open('${r.horaFin}', v=>updateCampo('${r.id}','horaFin',v))">
-                                <span class="time-icon">🕐</span>${r.horaFin}</button></div>
-                    </div>
-                    <div class="field-row">
-                        <div class="field-group"><label>Nº barcos</label>
-                            <input type="number" min="1" max="2" value="${r.barcos}" onchange="updateCampo('${r.id}','barcos',this.value)"></div>
-                    </div>
-                    <div class="plazas-meter">
-                        <div class="plazas-meter-top">
-                            <div>
-                                <div class="plazas-disponibles" style="color:${sobre?'var(--red)':cls==='libre'?'var(--green)':cls==='pocos'?'var(--amber)':'var(--red)'}">${lib}</div>
-                                <div class="plazas-label">${sobre?'de más':'plazas libres'}</div>
-                            </div>
-                            <div class="plazas-total">de ${cap} total</div>
+                                <span class="time-icon">🕐</span>${r.horaInicio}</button>
                         </div>
-                        <div class="bar-track"><div class="bar-fill ${cls}" style="width:${pct}%"></div></div>
-                        <span class="estado-pill ${cls}">${label}</span>
-                    </div>
+                        <div class="field-group">
+                            <label>Fin</label>
+                            <button class="time-btn" onclick="tp.open('${r.horaFin}', v=>updateCampo('${r.id}','horaFin',v))">
+                                <span class="time-icon">🕐</span>${r.horaFin}</button>
+                        </div>
+                        <div class="field-group" style="flex:0 0 80px;">
+                            <label>Barcos</label>
+                            <input type="number" min="1" max="2" value="${r.barcos}" onchange="updateCampo('${r.id}','barcos',this.value)" style="text-align:center;">
+                        </div>
                     </div>
                     ${bloqueReservas(r, r.cancelada)}
-                    <div class="field-group" style="margin-top:12px;${r.cancelada?'opacity:.4;pointer-events:none':''}"><label>Nota</label>
-                        <textarea placeholder="Ej: grupo reservado, mal tiempo…" onchange="updateCampo('${r.id}','notas',this.value)">${r.notas||''}</textarea>
+                    <div class="tc-nota" style="${r.cancelada?'opacity:.4;pointer-events:none':''}">
+                        📝 <textarea placeholder="Nota opcional…" onchange="updateCampo('${r.id}','notas',this.value)" rows="1">${r.notas||''}</textarea>
                     </div>
-                    <div class="turno-actions" style="margin-top:10px;">
+                    <div class="tc-actions">
                         <button class="btn btn-danger btn-sm" onclick="eliminarTurno('${r.id}')">✕ Borrar</button>
                         ${cancelBtn}
                         <span class="saved-tick" id="tick-${r.id}">✓ Guardado</span>
