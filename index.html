@@ -10,6 +10,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Rutas Barco">
     <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Rutas%20en%20Barco%22,%22short_name%22:%22Barco%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%230a2540%22,%22theme_color%22:%22%230a2540%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛵</text></svg>%22,%22sizes%22:%22any%22,%22type%22:%22image/svg+xml%22}]}">
+    <!-- Firebase SDK (sincronización en tiempo real) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
     <style>
         :root {
             --navy:   #0a2540;
@@ -275,6 +278,16 @@
         .btn-reactivar:hover{opacity:.85;}
         .pill-cancel{background:#e2e8f0;color:#475569;}
         .time-btn .time-icon{font-size:13px;opacity:.5;}
+
+        /* SYNC STATUS */
+        .sync-wrap{display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0;}
+        .sync-dot{width:10px;height:10px;border-radius:50%;transition:background .4s;}
+        .sync-offline{background:rgba(255,255,255,.2);}
+        .sync-connecting{background:#fbbf24;animation:syncpulse 1s infinite;}
+        .sync-ok{background:#34d399;}
+        .sync-error{background:#f87171;}
+        @keyframes syncpulse{0%,100%{opacity:1}50%{opacity:.3}}
+        .sync-label{font-size:11px;opacity:.6;color:white;white-space:nowrap;}
     </style>
 </head>
 <body>
@@ -291,6 +304,10 @@
         <div class="header-text">
             <h1>Rutas en Barco</h1>
             <p>Control de plazas en tiempo real</p>
+        </div>
+        <div class="sync-wrap">
+            <div id="syncDot" class="sync-dot sync-offline" title="Sin Firebase configurado"></div>
+            <span id="syncLabel" class="sync-label"></span>
         </div>
     </div>
 </header>
@@ -430,6 +447,87 @@
 </div>
 
 <script>
+// ══════════════════════════════════════════════════════════════
+//  FIREBASE CONFIG  ← PEGA AQUÍ TU CONFIGURACIÓN
+//  (Firebase Console → Tu proyecto → ⚙️ Configuración → Tus apps)
+// ══════════════════════════════════════════════════════════════
+const FIREBASE_CONFIG = {
+    apiKey:            "TU_API_KEY",
+    authDomain:        "TU_PROYECTO.firebaseapp.com",
+    databaseURL:       "https://TU_PROYECTO-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId:         "TU_PROYECTO",
+    storageBucket:     "TU_PROYECTO.appspot.com",
+    messagingSenderId: "TU_NUMERO",
+    appId:             "TU_APP_ID"
+};
+// ══════════════════════════════════════════════════════════════
+
+// ── FIREBASE SYNC ──
+let fbRef = null;
+let fbActivo = false;
+let ultimaEscrituraLocal = 0;
+
+function setSyncStatus(estado) {
+    const dot = document.getElementById('syncDot');
+    const lbl = document.getElementById('syncLabel');
+    if (!dot) return;
+    dot.className = 'sync-dot sync-' + estado;
+    const textos = { ok:'Sincronizado', connecting:'Conectando…', error:'Sin conexión', offline:'' };
+    dot.title = textos[estado] || '';
+    if (lbl) lbl.textContent = estado === 'ok' ? 'Sync ✓' : estado === 'connecting' ? 'Conectando…' : estado === 'error' ? '¡Error sync!' : '';
+}
+
+function initFirebase() {
+    if (!FIREBASE_CONFIG.apiKey || FIREBASE_CONFIG.apiKey === 'TU_API_KEY') return;
+    try {
+        firebase.initializeApp(FIREBASE_CONFIG);
+        const db = firebase.database();
+        fbRef = db.ref('rutas-barco/v1');
+        fbActivo = true;
+        setSyncStatus('connecting');
+
+        fbRef.on('value', snap => {
+            // Ignorar el eco de nuestra propia escritura reciente
+            if (Date.now() - ultimaEscrituraLocal < 1200) { setSyncStatus('ok'); return; }
+            const data = snap.val();
+            if (!data) { setSyncStatus('ok'); return; }
+
+            const eraRutas = JSON.stringify(rutasData);
+            rutasData = data.rutas || [];
+            historial  = data.hist  || [];
+            migrar();
+
+            const cambioDesdeFuera = JSON.stringify(rutasData) !== eraRutas;
+            if (cambioDesdeFuera) {
+                const editorActivo = ['INPUT','TEXTAREA'].includes(document.activeElement?.tagName);
+                if (!editorActivo) {
+                    renderFormulario();
+                    if (document.getElementById('edu').classList.contains('active'))      renderDashboard();
+                    if (document.getElementById('historial').classList.contains('active')) renderHistorial();
+                    actualizarTabDot();
+                }
+                toast('🔄 Actualizado desde otro dispositivo');
+            }
+            setSyncStatus('ok');
+            // Guardar copia local
+            localStorage.setItem('rutasData', JSON.stringify(rutasData));
+            localStorage.setItem('histData',  JSON.stringify(historial));
+        }, err => {
+            console.error('Firebase:', err);
+            setSyncStatus('error');
+        });
+
+        // Detectar desconexión
+        db.ref('.info/connected').on('value', snap => {
+            if (!snap.val()) setSyncStatus('error');
+        });
+
+    } catch(e) {
+        console.error('Firebase init:', e);
+        fbActivo = false;
+    }
+}
+
 // ── TIME PICKER ──
 class TimePicker {
     constructor() {
@@ -524,6 +622,13 @@ function cargar(){
 function guardar(){
     localStorage.setItem('rutasData',JSON.stringify(rutasData));
     localStorage.setItem('histData', JSON.stringify(historial));
+    if(fbActivo && fbRef){
+        ultimaEscrituraLocal = Date.now();
+        setSyncStatus('connecting');
+        fbRef.set({ rutas: rutasData, hist: historial })
+            .then(()=>setSyncStatus('ok'))
+            .catch(e=>{ console.error('guardar Firebase:',e); setSyncStatus('error'); });
+    }
 }
 function migrar(){
     rutasData.forEach(r=>{
@@ -950,7 +1055,7 @@ function installApp(){ if(!deferredPrompt) return; deferredPrompt.prompt(); defe
 window.addEventListener('appinstalled',()=>document.getElementById('installBanner').classList.remove('visible'));
 
 // ── INIT ──
-window.addEventListener('load',()=>{ cargar(); initAngel(); renderDashboard(); actualizarTabDot(); });
+window.addEventListener('load',()=>{ cargar(); initFirebase(); initAngel(); renderDashboard(); actualizarTabDot(); });
 </script>
 </body>
 </html>
