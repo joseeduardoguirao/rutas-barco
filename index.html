@@ -250,10 +250,10 @@
         .tp-header .tp-ok{color:var(--teal2);}
         .tp-header .tp-cancel{color:var(--text2);}
         .tp-drums{display:flex;align-items:center;justify-content:center;gap:0;padding:0;position:relative;height:260px;}
-        .tp-drum{width:100px;height:260px;overflow-y:scroll;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;position:relative;}
+        .tp-drum{width:100px;height:260px;overflow-y:scroll;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;position:relative;overscroll-behavior:contain;}
         .tp-drum::-webkit-scrollbar{display:none;}
-        .tp-drum-pad{height:104px;flex-shrink:0;}
-        .tp-drum-item{height:52px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;scroll-snap-align:center;cursor:pointer;color:var(--text2);transition:color .15s,font-size .15s;font-variant-numeric:tabular-nums;user-select:none;}
+        .tp-drum-pad{height:104px;display:block;}
+        .tp-drum-item{height:52px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;scroll-snap-align:center;cursor:pointer;color:var(--text2);font-variant-numeric:tabular-nums;user-select:none;-webkit-user-select:none;}
         .tp-sep{font-size:32px;font-weight:700;color:var(--text);padding:0 4px;margin-top:-4px;flex-shrink:0;}
         .tp-mask{position:absolute;inset:0;pointer-events:none;}
         .tp-mask::before,.tp-mask::after{content:'';position:absolute;left:0;right:0;height:104px;z-index:1;}
@@ -433,52 +433,65 @@
 // ── TIME PICKER ──
 class TimePicker {
     constructor() {
-        this.cb   = null;
-        this.ITEM = 52;
+        this.cb    = null;
+        this.ITEM  = 52;   // px height of each option
         this.HOURS = Array.from({length:19}, (_,i) => String(i+5).padStart(2,'0')); // 05–23
         this.MINS  = ['00','15','30','45'];
     }
+
     open(val, cb) {
         this.cb = cb;
-        const [h, m] = (val||'09:00').split(':');
+        const [h, m] = (val || '09:00').split(':');
         const hi = Math.max(0, this.HOURS.indexOf(h));
-        const mi = Math.max(0, this.MINS.indexOf(m) >= 0 ? this.MINS.indexOf(m) : 0);
+        const mi = Math.max(0, this.MINS.findIndex(x => x === m));
         this._fill('tpH', this.HOURS, hi);
-        this._fill('tpM', this.MINS,  mi);
+        this._fill('tpM', this.MINS,  mi < 0 ? 0 : mi);
         document.getElementById('tpOverlay').classList.add('active');
     }
+
     _fill(id, items, idx) {
-        const drum = document.getElementById(id);
+        // Replace node to wipe all event listeners cleanly
+        const old  = document.getElementById(id);
+        const drum = old.cloneNode(false);   // shallow copy keeps id, class, style
+        old.parentNode.replaceChild(drum, old);
+
+        // One 104px pad top + items + one 104px pad bottom
+        // so item[0] centers when scrollTop=0, item[i] when scrollTop = i*ITEM
         drum.innerHTML =
-            `<div class="tp-drum-pad"></div>` +
+            '<div class="tp-drum-pad"></div>' +
             items.map(v => `<div class="tp-drum-item">${v}</div>`).join('') +
-            `<div class="tp-drum-pad"></div>`;
-        // remove old listener before adding new
-        drum.onscroll = null;
-        requestAnimationFrame(() => {
+            '<div class="tp-drum-pad"></div>';
+
+        // Wait two frames so the browser has painted before we set scrollTop
+        requestAnimationFrame(() => requestAnimationFrame(() => {
             drum.scrollTop = idx * this.ITEM;
-            drum.onscroll = () => this._snap(drum);
-        });
+            let snapTimer;
+            drum.addEventListener('scroll', () => {
+                clearTimeout(snapTimer);
+                snapTimer = setTimeout(() => {
+                    const target = Math.round(drum.scrollTop / this.ITEM) * this.ITEM;
+                    if (Math.abs(drum.scrollTop - target) > 1)
+                        drum.scrollTo({ top: target, behavior: 'smooth' });
+                }, 80);
+            }, { passive: true });
+        }));
     }
-    _snap(drum) {
-        clearTimeout(drum._st);
-        drum._st = setTimeout(() => {
-            const idx = Math.round(drum.scrollTop / this.ITEM);
-            drum.scrollTo({top: idx * this.ITEM, behavior: 'smooth'});
-        }, 120);
-    }
+
     _read(id, items) {
         const drum = document.getElementById(id);
-        const idx  = Math.max(0, Math.min(Math.round(drum.scrollTop / this.ITEM), items.length-1));
-        return items[idx];
+        return items[Math.max(0, Math.min(Math.round(drum.scrollTop / this.ITEM), items.length - 1))];
     }
+
     confirm() {
-        const h = this._read('tpH', this.HOURS);
-        const m = this._read('tpM', this.MINS);
-        if (this.cb) this.cb(`${h}:${m}`);
+        const val = `${this._read('tpH', this.HOURS)}:${this._read('tpM', this.MINS)}`;
+        if (this.cb) this.cb(val);
         this.close();
     }
-    close() { document.getElementById('tpOverlay').classList.remove('active'); }
+
+    close() {
+        document.getElementById('tpOverlay').classList.remove('active');
+        this.cb = null;
+    }
 }
 const tp = new TimePicker();
 
