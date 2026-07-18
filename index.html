@@ -268,6 +268,24 @@
         .time-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border:2px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:15px;font-weight:700;cursor:pointer;font-variant-numeric:tabular-nums;transition:border-color .2s;}
         .time-btn:hover,.time-btn:active{border-color:var(--teal);background:var(--card);}
 
+        /* AÑADIR PERSONAS */
+        .añadir-wrap{display:flex;flex-direction:column;gap:10px;margin-top:6px;}
+        .ocupadas-display{display:flex;align-items:baseline;gap:8px;margin-bottom:2px;}
+        .ocupadas-num{font-size:48px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1;}
+        .ocupadas-meta{display:flex;flex-direction:column;gap:2px;}
+        .ocupadas-de{font-size:12px;color:var(--text2);}
+        .libres-chip{font-size:13px;font-weight:700;padding:3px 9px;border-radius:20px;}
+        .add-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);}
+        .add-btns{display:flex;gap:6px;flex-wrap:wrap;}
+        .add-btn{flex:1;min-width:44px;padding:13px 6px;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);font-size:16px;font-weight:800;cursor:pointer;text-align:center;transition:background .15s,border-color .15s,transform .1s;}
+        .add-btn:active{transform:scale(.94);background:var(--teal);border-color:var(--teal);color:white;}
+        .add-btn.neg{color:var(--red);border-color:rgba(220,38,38,.2);background:var(--redb);font-size:14px;flex:0 0 auto;min-width:52px;}
+        .add-btn.neg:active{background:var(--red);color:white;}
+        .add-custom{display:flex;gap:6px;align-items:center;}
+        .add-custom input{width:64px;padding:9px 10px;border:2px solid var(--border);border-radius:9px;font-size:16px;font-weight:700;text-align:center;background:var(--bg);color:var(--text);font-variant-numeric:tabular-nums;}
+        .add-custom input:focus{outline:none;border-color:var(--teal);background:var(--card);}
+        .add-custom .btn{flex:1;}
+
         /* CANCELADA */
         .turno-card.cancelada{opacity:.75;border-color:#94a3b8;}
         .turno-card.cancelada .turno-card-head{background:linear-gradient(135deg,#475569,#334155);}
@@ -740,6 +758,31 @@ function renderFormulario(){
             ?`<button class="btn btn-reactivar btn-sm" onclick="toggleCancelada('${r.id}')">✓ Reactivar ruta</button>`
             :`<button class="btn btn-cancelar btn-sm" onclick="toggleCancelada('${r.id}')">🌊 Mal tiempo</button>`;
 
+        const bloqueSuma = (id, ocupadas, cap, cls, lib, sobre, cancelada) => `
+            <div class="añadir-wrap" style="${cancelada?'opacity:.4;pointer-events:none':''}">
+                <div class="ocupadas-display">
+                    <div class="ocupadas-num" style="color:${sobre?'var(--red)':cls==='lleno'?'var(--red)':cls==='pocos'?'var(--amber)':'var(--text)'}">${ocupadas}</div>
+                    <div class="ocupadas-meta">
+                        <span class="ocupadas-de">de ${cap} plazas</span>
+                        <span class="libres-chip ${cls}">${sobre?'⛔ '+Math.abs(lib)+' de más':lib===0?'✕ Lleno':lib+' libres'}</span>
+                    </div>
+                </div>
+                ${cancelada?'':'<div class="bar-track"><div class="bar-fill '+cls+'" style="width:'+Math.min(Math.round((ocupadas/cap)*100),100)+'%"></div></div>'}
+                <div class="add-label">Añadir personas</div>
+                <div class="add-btns">
+                    <button class="add-btn" onclick="sumarPersonas('${id}',1)">+1</button>
+                    <button class="add-btn" onclick="sumarPersonas('${id}',2)">+2</button>
+                    <button class="add-btn" onclick="sumarPersonas('${id}',3)">+3</button>
+                    <button class="add-btn" onclick="sumarPersonas('${id}',4)">+4</button>
+                    <button class="add-btn" onclick="sumarPersonas('${id}',5)">+5</button>
+                    <button class="add-btn neg" onclick="sumarPersonas('${id}',-1)">−1</button>
+                </div>
+                <div class="add-custom">
+                    <input type="number" min="1" max="30" placeholder="N°" id="custom-${id}">
+                    <button class="btn btn-primary" onclick="sumarPersonasCustom('${id}')">+ Añadir</button>
+                </div>
+            </div>`;
+
         if(modoRapido){
             html+=`
             <div class="turno-card ${cardCls}" id="card-${r.id}">
@@ -749,18 +792,9 @@ function renderFormulario(){
                 </div>
                 <div class="turno-body">
                     ${cancelBanner}
-                    <div class="modo-rapido-wrap" style="${r.cancelada?'opacity:.4;pointer-events:none':''}">
-                        <div class="ocupadas-label">Plazas ocupadas</div>
-                        <input class="ocupadas-big" type="number" min="0" max="${cap+5}" value="${r.ocupadas}"
-                            onchange="updateCampo('${r.id}','ocupadas',this.value)"
-                            style="color:${sobre?'var(--red)':cls==='lleno'?'var(--red)':cls==='pocos'?'var(--amber)':'var(--text)'}">
-                        <div class="plazas-label" style="color:${sobre?'var(--red)':'var(--text2)'}">
-                            ${sobre?'⛔ '+Math.abs(lib)+' de más':'de '+cap+' totales'}
-                        </div>
-                    </div>
-                    ${r.cancelada?'':` <div class="bar-track" style="margin-top:8px;"><div class="bar-fill ${cls}" style="width:${pct}%"></div></div>`}
+                    ${bloqueSuma(r.id, r.ocupadas, cap, cls, lib, sobre, r.cancelada)}
                     ${notaBadge}
-                    <div class="turno-actions">
+                    <div class="turno-actions" style="margin-top:10px;">
                         ${cancelBtn}
                         <button class="btn btn-ghost btn-sm" onclick="abrirModalEditar('${r.id}')">Editar</button>
                         <span class="saved-tick" id="tick-${r.id}">✓ Guardado</span>
@@ -788,23 +822,11 @@ function renderFormulario(){
                     <div class="field-row">
                         <div class="field-group"><label>Nº barcos</label>
                             <input type="number" min="1" max="2" value="${r.barcos}" onchange="updateCampo('${r.id}','barcos',this.value)"></div>
-                        <div class="field-group"><label>Ocupadas</label>
-                            <input type="number" min="0" max="${cap+5}" value="${r.ocupadas}" onchange="updateCampo('${r.id}','ocupadas',this.value)"></div>
                     </div>
-                    <div class="field-group" style="margin-bottom:12px;"><label>Nota</label>
+                    </div>
+                    ${bloqueSuma(r.id, r.ocupadas, cap, cls, lib, sobre, r.cancelada)}
+                    <div class="field-group" style="margin-top:12px;${r.cancelada?'opacity:.4;pointer-events:none':''}"><label>Nota</label>
                         <textarea placeholder="Ej: grupo reservado, mal tiempo…" onchange="updateCampo('${r.id}','notas',this.value)">${r.notas||''}</textarea>
-                    </div>
-                    <div class="plazas-meter">
-                        <div class="plazas-meter-top">
-                            <div>
-                                <div class="plazas-disponibles" style="color:${sobre?'var(--red)':cls==='libre'?'var(--green)':cls==='pocos'?'var(--amber)':'var(--red)'}">${lib}</div>
-                                <div class="plazas-label">${sobre?'de más':'plazas libres'}</div>
-                            </div>
-                            <div class="plazas-total">de ${cap} total</div>
-                        </div>
-                        <div class="bar-track"><div class="bar-fill ${cls}" style="width:${pct}%"></div></div>
-                        <span class="estado-pill ${cls}">${label}</span>
-                    </div>
                     </div>
                     <div class="turno-actions" style="margin-top:10px;">
                         <button class="btn btn-danger btn-sm" onclick="eliminarTurno('${r.id}')">✕ Borrar</button>
@@ -870,6 +892,25 @@ async function eliminarTurno(id){
     logHistorial('Turno borrado',`${r.fecha}: ${r.horaInicio}-${r.horaFin}`,r.fecha);
     toast('Turno borrado');
     renderFormulario();
+}
+
+function sumarPersonas(id, n){
+    const r=rutasData.find(x=>x.id===id); if(!r) return;
+    const nuevo=Math.max(0, r.ocupadas+n);
+    r.ocupadas=nuevo;
+    guardar();
+    logHistorial('Reserva'+(n<0?' cancelada':''),(n<0?'−'+Math.abs(n):'+'+n)+` pers · ${r.fecha} ${r.horaInicio}-${r.horaFin} → ${nuevo} total`,r.fecha);
+    mostrarTickGuardado(id);
+    actualizarTabDot();
+    renderFormulario();
+}
+
+function sumarPersonasCustom(id){
+    const inp=document.getElementById('custom-'+id);
+    const n=parseInt(inp?.value);
+    if(!n||n<1) return;
+    inp.value='';
+    sumarPersonas(id, n);
 }
 
 async function updateCampo(id,campo,valor){
