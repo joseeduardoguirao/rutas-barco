@@ -529,13 +529,19 @@ function setSyncStatus(estado) {
 }
 
 function initFirebase() {
+    if (typeof mqtt === 'undefined') {
+        setSyncStatus('error');
+        console.warn('Librería MQTT no cargada');
+        return;
+    }
     setSyncStatus('connecting');
     try {
-        mqttClient = mqtt.connect('wss://broker.hivemq.com:8884/mqtt', {
+        mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', {
             clientId: 'barco_' + Math.random().toString(36).slice(2, 10),
             clean: true,
-            reconnectPeriod: 4000,
-            connectTimeout: 10000,
+            reconnectPeriod: 5000,
+            connectTimeout: 15000,
+            keepalive: 30,
         });
 
         mqttClient.on('connect', () => {
@@ -571,9 +577,9 @@ function initFirebase() {
             } catch(e) {}
         });
 
-        mqttClient.on('error',     () => setSyncStatus('error'));
-        mqttClient.on('offline',   () => setSyncStatus('error'));
-        mqttClient.on('reconnect', () => setSyncStatus('connecting'));
+        mqttClient.on('error',     (e) => { console.error('MQTT error:', e); setSyncStatus('error'); });
+        mqttClient.on('offline',   ()  => { syncActivo = false; setSyncStatus('error'); });
+        mqttClient.on('reconnect', ()  => setSyncStatus('connecting'));
 
     } catch(e) {
         console.error('MQTT init:', e);
