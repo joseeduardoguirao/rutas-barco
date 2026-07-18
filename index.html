@@ -979,7 +979,6 @@ function añadirReserva(turnoId){
     if(!r.reservas) r.reservas=[];
     r.reservas.push({id:genId(), nombre, telefono, personas});
     r.ocupadas = r.reservas.reduce((s,rv)=>s+(rv.personas||0),0);
-    delete _persSelec[turnoId];
     guardar();
     logHistorial('Reserva añadida',`${nombre} (${personas}p) · ${r.fecha} ${r.horaInicio}-${r.horaFin}`,r.fecha);
     mostrarTickGuardado(turnoId);
