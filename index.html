@@ -237,6 +237,34 @@
             .tabs-bar{position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--card);border-top:1px solid var(--border);padding:4px 8px env(safe-area-inset-bottom);box-shadow:0 -4px 20px rgba(0,0,0,.08);}
             .inner{padding-bottom:120px;}
         }
+
+        /* TIME PICKER */
+        .tp-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;align-items:flex-end;justify-content:center;}
+        .tp-overlay.active{display:flex;}
+        @media(min-width:480px){.tp-overlay{align-items:center;}}
+        .tp-box{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-width:340px;overflow:hidden;box-shadow:var(--shadow2);}
+        @media(min-width:480px){.tp-box{border-radius:20px;}}
+        .tp-header{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border);}
+        .tp-header span{font-size:15px;font-weight:700;}
+        .tp-header button{background:none;border:none;cursor:pointer;font-size:14px;font-weight:600;padding:4px 8px;border-radius:8px;}
+        .tp-header .tp-ok{color:var(--teal2);}
+        .tp-header .tp-cancel{color:var(--text2);}
+        .tp-drums{display:flex;align-items:center;justify-content:center;gap:0;padding:0;position:relative;height:260px;}
+        .tp-drum{width:100px;height:260px;overflow-y:scroll;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;position:relative;}
+        .tp-drum::-webkit-scrollbar{display:none;}
+        .tp-drum-pad{height:104px;flex-shrink:0;}
+        .tp-drum-item{height:52px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;scroll-snap-align:center;cursor:pointer;color:var(--text2);transition:color .15s,font-size .15s;font-variant-numeric:tabular-nums;user-select:none;}
+        .tp-sep{font-size:32px;font-weight:700;color:var(--text);padding:0 4px;margin-top:-4px;flex-shrink:0;}
+        .tp-mask{position:absolute;inset:0;pointer-events:none;}
+        .tp-mask::before,.tp-mask::after{content:'';position:absolute;left:0;right:0;height:104px;z-index:1;}
+        .tp-mask::before{top:0;background:linear-gradient(to bottom,var(--card) 20%,transparent);}
+        .tp-mask::after{bottom:0;background:linear-gradient(to top,var(--card) 20%,transparent);}
+        .tp-selector{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:220px;height:52px;border-top:2px solid var(--teal2);border-bottom:2px solid var(--teal2);border-radius:8px;pointer-events:none;z-index:2;}
+
+        /* TIME BUTTON (reemplaza input type=time) */
+        .time-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border:2px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:15px;font-weight:700;cursor:pointer;font-variant-numeric:tabular-nums;transition:border-color .2s;}
+        .time-btn:hover,.time-btn:active{border-color:var(--teal);background:var(--card);}
+        .time-btn .time-icon{font-size:13px;opacity:.5;}
     </style>
 </head>
 <body>
@@ -335,8 +363,12 @@
         <div class="modal-fields">
             <div class="modal-field"><label>Fecha</label><input type="text" id="mFecha" readonly style="opacity:.6;"></div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-                <div class="modal-field"><label>Inicio</label><input type="time" id="mInicio"></div>
-                <div class="modal-field"><label>Fin</label><input type="time" id="mFin"></div>
+                <div class="modal-field"><label>Inicio</label>
+                    <button class="time-btn" id="mInicio" onclick="tp.open(this.dataset.val||'09:00', v=>{this.dataset.val=v;this.childNodes[1].textContent=v;})">
+                        <span class="time-icon">🕐</span><span>09:00</span></button></div>
+                <div class="modal-field"><label>Fin</label>
+                    <button class="time-btn" id="mFin" onclick="tp.open(this.dataset.val||'11:00', v=>{this.dataset.val=v;this.childNodes[1].textContent=v;})">
+                        <span class="time-icon">🕐</span><span>11:00</span></button></div>
             </div>
             <div class="modal-field"><label>Nº barcos (1-2)</label><input type="number" id="mBarcos" min="1" max="2"></div>
             <div class="modal-field"><label>Plazas ocupadas</label><input type="number" id="mOcupadas" min="0"></div>
@@ -369,7 +401,77 @@
 
 <div id="toast" class="toast"></div>
 
+<!-- TIME PICKER -->
+<div id="tpOverlay" class="tp-overlay" onclick="if(event.target===this)tp.close()">
+    <div class="tp-box">
+        <div class="tp-header">
+            <button class="tp-cancel" onclick="tp.close()">Cancelar</button>
+            <span>Seleccionar hora</span>
+            <button class="tp-ok" onclick="tp.confirm()">Listo</button>
+        </div>
+        <div class="tp-drums">
+            <div class="tp-drum" id="tpH"></div>
+            <div class="tp-sep">:</div>
+            <div class="tp-drum" id="tpM"></div>
+            <div class="tp-mask"></div>
+            <div class="tp-selector"></div>
+        </div>
+    </div>
+</div>
+
 <script>
+// ── TIME PICKER ──
+class TimePicker {
+    constructor() {
+        this.cb   = null;
+        this.ITEM = 52;
+        this.HOURS = Array.from({length:19}, (_,i) => String(i+5).padStart(2,'0')); // 05–23
+        this.MINS  = ['00','15','30','45'];
+    }
+    open(val, cb) {
+        this.cb = cb;
+        const [h, m] = (val||'09:00').split(':');
+        const hi = Math.max(0, this.HOURS.indexOf(h));
+        const mi = Math.max(0, this.MINS.indexOf(m) >= 0 ? this.MINS.indexOf(m) : 0);
+        this._fill('tpH', this.HOURS, hi);
+        this._fill('tpM', this.MINS,  mi);
+        document.getElementById('tpOverlay').classList.add('active');
+    }
+    _fill(id, items, idx) {
+        const drum = document.getElementById(id);
+        drum.innerHTML =
+            `<div class="tp-drum-pad"></div>` +
+            items.map(v => `<div class="tp-drum-item">${v}</div>`).join('') +
+            `<div class="tp-drum-pad"></div>`;
+        // remove old listener before adding new
+        drum.onscroll = null;
+        requestAnimationFrame(() => {
+            drum.scrollTop = idx * this.ITEM;
+            drum.onscroll = () => this._snap(drum);
+        });
+    }
+    _snap(drum) {
+        clearTimeout(drum._st);
+        drum._st = setTimeout(() => {
+            const idx = Math.round(drum.scrollTop / this.ITEM);
+            drum.scrollTo({top: idx * this.ITEM, behavior: 'smooth'});
+        }, 120);
+    }
+    _read(id, items) {
+        const drum = document.getElementById(id);
+        const idx  = Math.max(0, Math.min(Math.round(drum.scrollTop / this.ITEM), items.length-1));
+        return items[idx];
+    }
+    confirm() {
+        const h = this._read('tpH', this.HOURS);
+        const m = this._read('tpM', this.MINS);
+        if (this.cb) this.cb(`${h}:${m}`);
+        this.close();
+    }
+    close() { document.getElementById('tpOverlay').classList.remove('active'); }
+}
+const tp = new TimePicker();
+
 // ── CONSTANTES ──
 const PLAZAS_POR_BARCO = 12;
 const PLANTILLA = [
@@ -537,9 +639,11 @@ function renderFormulario(){
                 <div class="turno-body">
                     <div class="field-row">
                         <div class="field-group"><label>Inicio</label>
-                            <input type="time" value="${r.horaInicio}" onchange="updateCampo('${r.id}','horaInicio',this.value)"></div>
+                            <button class="time-btn" onclick="tp.open('${r.horaInicio}', v=>updateCampo('${r.id}','horaInicio',v))">
+                                <span class="time-icon">🕐</span>${r.horaInicio}</button></div>
                         <div class="field-group"><label>Fin</label>
-                            <input type="time" value="${r.horaFin}" onchange="updateCampo('${r.id}','horaFin',this.value)"></div>
+                            <button class="time-btn" onclick="tp.open('${r.horaFin}', v=>updateCampo('${r.id}','horaFin',v))">
+                                <span class="time-icon">🕐</span>${r.horaFin}</button></div>
                     </div>
                     <div class="field-row">
                         <div class="field-group"><label>Nº barcos</label>
@@ -712,8 +816,8 @@ function abrirModalEditar(id){
     const r=rutasData.find(x=>x.id===id); if(!r) return;
     editId=id;
     document.getElementById('mFecha').value=r.fecha;
-    document.getElementById('mInicio').value=r.horaInicio;
-    document.getElementById('mFin').value=r.horaFin;
+    const mI=document.getElementById('mInicio'); mI.dataset.val=r.horaInicio; mI.querySelector('span:last-child').textContent=r.horaInicio;
+    const mF=document.getElementById('mFin');   mF.dataset.val=r.horaFin;    mF.querySelector('span:last-child').textContent=r.horaFin;
     document.getElementById('mBarcos').value=r.barcos;
     document.getElementById('mOcupadas').value=r.ocupadas;
     document.getElementById('mNota').value=r.notas||'';
@@ -722,8 +826,8 @@ function abrirModalEditar(id){
 function cerrarModal(){ document.getElementById('editModal').classList.remove('active'); editId=null; }
 async function guardarEdicion(){
     const r=rutasData.find(x=>x.id===editId); if(!r) return;
-    r.horaInicio=document.getElementById('mInicio').value;
-    r.horaFin=document.getElementById('mFin').value;
+    r.horaInicio=document.getElementById('mInicio').dataset.val||'09:00';
+    r.horaFin=document.getElementById('mFin').dataset.val||'11:00';
     r.barcos=parseInt(document.getElementById('mBarcos').value);
     r.ocupadas=parseInt(document.getElementById('mOcupadas').value);
     r.notas=document.getElementById('mNota').value;
