@@ -870,6 +870,7 @@ function renderFormulario(){
                     ${bloqueReservas(r, r.cancelada)}
                     ${r.notas?`<div class="tc-nota">📝 ${r.notas}</div>`:''}
                     <div class="tc-actions">
+                        <button class="btn btn-danger btn-sm" onclick="eliminarTurno('${r.id}')">✕ Borrar</button>
                         ${cancelBtn}
                         <button class="btn btn-ghost btn-sm" onclick="abrirModalEditar('${r.id}')">✏️ Editar</button>
                         <span class="saved-tick" id="tick-${r.id}">✓ Guardado</span>
