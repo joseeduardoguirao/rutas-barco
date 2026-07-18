@@ -776,7 +776,6 @@ function renderFormulario(){
                     <span class="reserva-pers">${rv.personas} pers.</span>
                     <button class="reserva-del" onclick="borrarReserva('${turno.id}','${rv.id}')" title="Eliminar reserva">✕</button>
                 </div>`).join('');
-            const persBtns = [1,2,3,4,5,6,8,10].map(n=>`<button class="pers-btn" id="pb-${turno.id}-${n}" onclick="seleccionarPersonas('${turno.id}',${n})">${n}</button>`).join('');
             return `
             <div class="reservas-section">
                 <div class="reservas-title">
@@ -792,7 +791,7 @@ function renderFormulario(){
                     </div>
                     <div class="personas-row">
                         <span class="pers-label">Personas:</span>
-                        ${persBtns}
+                        <input type="number" min="1" max="30" placeholder="Nº" id="rp-${turno.id}" style="width:72px;padding:9px 10px;border:2px solid var(--border);border-radius:8px;font-size:16px;font-weight:700;text-align:center;background:var(--card);color:var(--text);">
                     </div>
                     <button class="btn btn-primary btn-wide" onclick="añadirReserva('${turno.id}')">＋ Añadir reserva</button>
                 </div>`}
@@ -948,9 +947,9 @@ function añadirReserva(turnoId){
     const r=rutasData.find(x=>x.id===turnoId); if(!r) return;
     const nombre=(document.getElementById('rn-'+turnoId)?.value||'').trim();
     const telefono=(document.getElementById('rt-'+turnoId)?.value||'').trim();
-    const personas=_persSelec[turnoId]||0;
+    const personas=parseInt(document.getElementById('rp-'+turnoId)?.value)||0;
     if(!nombre){ toast('Escribe un nombre'); return; }
-    if(!personas){ toast('Selecciona el número de personas'); return; }
+    if(!personas||personas<1){ toast('Indica el número de personas'); return; }
     if(!r.reservas) r.reservas=[];
     r.reservas.push({id:genId(), nombre, telefono, personas});
     r.ocupadas = r.reservas.reduce((s,rv)=>s+(rv.personas||0),0);
