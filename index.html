@@ -268,23 +268,26 @@
         .time-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border:2px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:15px;font-weight:700;cursor:pointer;font-variant-numeric:tabular-nums;transition:border-color .2s;}
         .time-btn:hover,.time-btn:active{border-color:var(--teal);background:var(--card);}
 
-        /* AÑADIR PERSONAS */
-        .añadir-wrap{display:flex;flex-direction:column;gap:10px;margin-top:6px;}
-        .ocupadas-display{display:flex;align-items:baseline;gap:8px;margin-bottom:2px;}
-        .ocupadas-num{font-size:48px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1;}
-        .ocupadas-meta{display:flex;flex-direction:column;gap:2px;}
-        .ocupadas-de{font-size:12px;color:var(--text2);}
-        .libres-chip{font-size:13px;font-weight:700;padding:3px 9px;border-radius:20px;}
-        .add-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);}
-        .add-btns{display:flex;gap:6px;flex-wrap:wrap;}
-        .add-btn{flex:1;min-width:44px;padding:13px 6px;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);font-size:16px;font-weight:800;cursor:pointer;text-align:center;transition:background .15s,border-color .15s,transform .1s;}
-        .add-btn:active{transform:scale(.94);background:var(--teal);border-color:var(--teal);color:white;}
-        .add-btn.neg{color:var(--red);border-color:rgba(220,38,38,.2);background:var(--redb);font-size:14px;flex:0 0 auto;min-width:52px;}
-        .add-btn.neg:active{background:var(--red);color:white;}
-        .add-custom{display:flex;gap:6px;align-items:center;}
-        .add-custom input{width:64px;padding:9px 10px;border:2px solid var(--border);border-radius:9px;font-size:16px;font-weight:700;text-align:center;background:var(--bg);color:var(--text);font-variant-numeric:tabular-nums;}
-        .add-custom input:focus{outline:none;border-color:var(--teal);background:var(--card);}
-        .add-custom .btn{flex:1;}
+        /* RESERVAS */
+        .reservas-section{margin-top:12px;border-top:1px solid var(--border);padding-top:12px;}
+        .reservas-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
+        .reservas-count{background:var(--teal2);color:white;border-radius:20px;padding:2px 8px;font-size:11px;}
+        .reserva-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg);border-radius:9px;margin-bottom:6px;border:1px solid var(--border);}
+        .reserva-info{flex:1;min-width:0;}
+        .reserva-nombre{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .reserva-tel{font-size:12px;color:var(--text2);}
+        .reserva-pers{background:var(--navy);color:white;border-radius:20px;padding:3px 9px;font-size:12px;font-weight:700;white-space:nowrap;flex-shrink:0;}
+        .reserva-del{background:none;border:none;color:var(--text2);cursor:pointer;font-size:16px;padding:4px;border-radius:6px;flex-shrink:0;line-height:1;}
+        .reserva-del:hover{color:var(--red);background:var(--redb);}
+        .add-reserva-form{background:var(--bg);border:1.5px dashed var(--border);border-radius:10px;padding:12px;margin-top:6px;}
+        .add-reserva-form .form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+        .add-reserva-form input{width:100%;padding:9px 10px;border:2px solid var(--border);border-radius:8px;font-size:13px;background:var(--card);color:var(--text);font-family:inherit;}
+        .add-reserva-form input:focus{outline:none;border-color:var(--teal);}
+        .personas-row{display:flex;gap:6px;align-items:center;margin-bottom:10px;}
+        .pers-label{font-size:12px;color:var(--text2);font-weight:600;white-space:nowrap;}
+        .pers-btn{width:40px;height:40px;border:2px solid var(--border);border-radius:9px;background:var(--card);color:var(--text);font-size:15px;font-weight:800;cursor:pointer;transition:all .15s;flex-shrink:0;}
+        .pers-btn.sel{background:var(--navy);color:white;border-color:var(--navy);}
+        .pers-btn:active{transform:scale(.92);}
 
         /* CANCELADA */
         .turno-card.cancelada{opacity:.75;border-color:#94a3b8;}
@@ -386,7 +389,7 @@
         </div>
         <div class="table-wrap">
             <table>
-                <thead><tr><th>Fecha</th><th>Horario</th><th>Barcos</th><th>Libre/Total</th><th>Ocupación</th><th>Estado</th><th>Nota</th><th></th></tr></thead>
+                <thead><tr><th>Fecha</th><th>Horario</th><th>Barcos</th><th>Libre/Total</th><th>Estado</th><th>Reservas</th><th></th></tr></thead>
                 <tbody id="tablaBody"><tr><td colspan="8" class="table-empty">Cargando…</td></tr></tbody>
             </table>
         </div>
@@ -657,8 +660,13 @@ function migrar(){
         if(!r.horaInicio&&r.hora){ const p=r.hora.split('-'); r.horaInicio=p[0]||'09:00'; r.horaFin=p[1]||'11:00'; delete r.hora; }
         if(!r.notas)     r.notas='';
         if(r.cancelada===undefined) r.cancelada=false;
+        if(!r.reservas)  r.reservas=[];
+        // recalcular ocupadas desde reservas siempre
+        r.ocupadas = r.reservas.reduce((s,rv)=>s+(rv.personas||0),0);
     });
 }
+
+function ocupadasDe(r){ return r.reservas ? r.reservas.reduce((s,rv)=>s+(rv.personas||0),0) : (r.ocupadas||0); }
 function logHistorial(accion,detalles,fechaRuta){
     historial.unshift({fecha:new Date().toLocaleString('es-ES'),accion,detalles,fechaRuta:fechaRuta||null});
     if(historial.length>100) historial.pop();
@@ -758,41 +766,60 @@ function renderFormulario(){
             ?`<button class="btn btn-reactivar btn-sm" onclick="toggleCancelada('${r.id}')">✓ Reactivar ruta</button>`
             :`<button class="btn btn-cancelar btn-sm" onclick="toggleCancelada('${r.id}')">🌊 Mal tiempo</button>`;
 
-        const bloqueSuma = (id, ocupadas, cap, cls, lib, sobre, cancelada) => `
-            <div class="añadir-wrap" style="${cancelada?'opacity:.4;pointer-events:none':''}">
-                <div class="ocupadas-display">
-                    <div class="ocupadas-num" style="color:${sobre?'var(--red)':cls==='lleno'?'var(--red)':cls==='pocos'?'var(--amber)':'var(--text)'}">${ocupadas}</div>
-                    <div class="ocupadas-meta">
-                        <span class="ocupadas-de">de ${cap} plazas</span>
-                        <span class="libres-chip ${cls}">${sobre?'⛔ '+Math.abs(lib)+' de más':lib===0?'✕ Lleno':lib+' libres'}</span>
+        const bloqueReservas = (turno, cancelada) => {
+            const lista = (turno.reservas||[]).map(rv=>`
+                <div class="reserva-item">
+                    <div class="reserva-info">
+                        <div class="reserva-nombre">${rv.nombre||'Sin nombre'}</div>
+                        <div class="reserva-tel">${rv.telefono||'—'}</div>
                     </div>
+                    <span class="reserva-pers">${rv.personas} pers.</span>
+                    <button class="reserva-del" onclick="borrarReserva('${turno.id}','${rv.id}')" title="Eliminar reserva">✕</button>
+                </div>`).join('');
+            const persBtns = [1,2,3,4,5,6,8,10].map(n=>`<button class="pers-btn" id="pb-${turno.id}-${n}" onclick="seleccionarPersonas('${turno.id}',${n})">${n}</button>`).join('');
+            return `
+            <div class="reservas-section">
+                <div class="reservas-title">
+                    <span>Reservas</span>
+                    ${turno.reservas?.length?`<span class="reservas-count">${turno.reservas.length} reserva${turno.reservas.length!==1?'s':''}</span>`:''}
                 </div>
-                ${cancelada?'':'<div class="bar-track"><div class="bar-fill '+cls+'" style="width:'+Math.min(Math.round((ocupadas/cap)*100),100)+'%"></div></div>'}
-                <div class="add-label">Añadir personas</div>
-                <div class="add-btns">
-                    <button class="add-btn" onclick="sumarPersonas('${id}',1)">+1</button>
-                    <button class="add-btn" onclick="sumarPersonas('${id}',2)">+2</button>
-                    <button class="add-btn" onclick="sumarPersonas('${id}',3)">+3</button>
-                    <button class="add-btn" onclick="sumarPersonas('${id}',4)">+4</button>
-                    <button class="add-btn" onclick="sumarPersonas('${id}',5)">+5</button>
-                    <button class="add-btn neg" onclick="sumarPersonas('${id}',-1)">−1</button>
-                </div>
-                <div class="add-custom">
-                    <input type="number" min="1" max="30" placeholder="N°" id="custom-${id}">
-                    <button class="btn btn-primary" onclick="sumarPersonasCustom('${id}')">+ Añadir</button>
-                </div>
+                ${lista||'<p style="font-size:12px;color:var(--text2);margin-bottom:8px;">Sin reservas aún</p>'}
+                ${cancelada?'':`
+                <div class="add-reserva-form">
+                    <div class="form-row">
+                        <input type="text" placeholder="Nombre" id="rn-${turno.id}" autocomplete="off">
+                        <input type="tel" placeholder="Teléfono" id="rt-${turno.id}" autocomplete="off">
+                    </div>
+                    <div class="personas-row">
+                        <span class="pers-label">Personas:</span>
+                        ${persBtns}
+                    </div>
+                    <button class="btn btn-primary btn-wide" onclick="añadirReserva('${turno.id}')">＋ Añadir reserva</button>
+                </div>`}
             </div>`;
+        };
 
         if(modoRapido){
             html+=`
             <div class="turno-card ${cardCls}" id="card-${r.id}">
                 <div class="turno-card-head">
                     <span class="turno-hora">${r.horaInicio} – ${r.horaFin}</span>
-                    <span class="turno-barcos-badge">🚤 ${r.barcos}</span>
+                    <span class="turno-barcos-badge">🚤 ${r.barcos} · ${r.ocupadas}/${cap}</span>
                 </div>
                 <div class="turno-body">
                     ${cancelBanner}
-                    ${bloqueSuma(r.id, r.ocupadas, cap, cls, lib, sobre, r.cancelada)}
+                    <div class="plazas-meter" style="margin-bottom:4px;">
+                        <div class="plazas-meter-top">
+                            <div>
+                                <div class="plazas-disponibles" style="color:${sobre?'var(--red)':cls==='libre'?'var(--green)':cls==='pocos'?'var(--amber)':'var(--red)'}">${lib}</div>
+                                <div class="plazas-label">${sobre?'de más':'plazas libres'}</div>
+                            </div>
+                            <div class="plazas-total">de ${cap} total</div>
+                        </div>
+                        <div class="bar-track"><div class="bar-fill ${cls}" style="width:${pct}%"></div></div>
+                        <span class="estado-pill ${cls}">${label}</span>
+                    </div>
+                    ${bloqueReservas(r, r.cancelada)}
                     ${notaBadge}
                     <div class="turno-actions" style="margin-top:10px;">
                         ${cancelBtn}
@@ -823,8 +850,19 @@ function renderFormulario(){
                         <div class="field-group"><label>Nº barcos</label>
                             <input type="number" min="1" max="2" value="${r.barcos}" onchange="updateCampo('${r.id}','barcos',this.value)"></div>
                     </div>
+                    <div class="plazas-meter">
+                        <div class="plazas-meter-top">
+                            <div>
+                                <div class="plazas-disponibles" style="color:${sobre?'var(--red)':cls==='libre'?'var(--green)':cls==='pocos'?'var(--amber)':'var(--red)'}">${lib}</div>
+                                <div class="plazas-label">${sobre?'de más':'plazas libres'}</div>
+                            </div>
+                            <div class="plazas-total">de ${cap} total</div>
+                        </div>
+                        <div class="bar-track"><div class="bar-fill ${cls}" style="width:${pct}%"></div></div>
+                        <span class="estado-pill ${cls}">${label}</span>
                     </div>
-                    ${bloqueSuma(r.id, r.ocupadas, cap, cls, lib, sobre, r.cancelada)}
+                    </div>
+                    ${bloqueReservas(r, r.cancelada)}
                     <div class="field-group" style="margin-top:12px;${r.cancelada?'opacity:.4;pointer-events:none':''}"><label>Nota</label>
                         <textarea placeholder="Ej: grupo reservado, mal tiempo…" onchange="updateCampo('${r.id}','notas',this.value)">${r.notas||''}</textarea>
                     </div>
@@ -894,23 +932,46 @@ async function eliminarTurno(id){
     renderFormulario();
 }
 
-function sumarPersonas(id, n){
-    const r=rutasData.find(x=>x.id===id); if(!r) return;
-    const nuevo=Math.max(0, r.ocupadas+n);
-    r.ocupadas=nuevo;
+// ── ESTADO TEMPORAL para formulario de reservas ──
+const _persSelec = {}; // turnoId → número de personas seleccionado
+
+function seleccionarPersonas(turnoId, n){
+    _persSelec[turnoId] = n;
+    // Marcar botón seleccionado visualmente
+    [1,2,3,4,5,6,8,10].forEach(x=>{
+        const b=document.getElementById(`pb-${turnoId}-${x}`);
+        if(b) b.classList.toggle('sel', x===n);
+    });
+}
+
+function añadirReserva(turnoId){
+    const r=rutasData.find(x=>x.id===turnoId); if(!r) return;
+    const nombre=(document.getElementById('rn-'+turnoId)?.value||'').trim();
+    const telefono=(document.getElementById('rt-'+turnoId)?.value||'').trim();
+    const personas=_persSelec[turnoId]||0;
+    if(!nombre){ toast('Escribe un nombre'); return; }
+    if(!personas){ toast('Selecciona el número de personas'); return; }
+    if(!r.reservas) r.reservas=[];
+    r.reservas.push({id:genId(), nombre, telefono, personas});
+    r.ocupadas = r.reservas.reduce((s,rv)=>s+(rv.personas||0),0);
+    delete _persSelec[turnoId];
     guardar();
-    logHistorial('Reserva'+(n<0?' cancelada':''),(n<0?'−'+Math.abs(n):'+'+n)+` pers · ${r.fecha} ${r.horaInicio}-${r.horaFin} → ${nuevo} total`,r.fecha);
-    mostrarTickGuardado(id);
+    logHistorial('Reserva añadida',`${nombre} (${personas}p) · ${r.fecha} ${r.horaInicio}-${r.horaFin}`,r.fecha);
+    mostrarTickGuardado(turnoId);
     actualizarTabDot();
     renderFormulario();
 }
 
-function sumarPersonasCustom(id){
-    const inp=document.getElementById('custom-'+id);
-    const n=parseInt(inp?.value);
-    if(!n||n<1) return;
-    inp.value='';
-    sumarPersonas(id, n);
+function borrarReserva(turnoId, reservaId){
+    const r=rutasData.find(x=>x.id===turnoId); if(!r) return;
+    const rv=r.reservas?.find(x=>x.id===reservaId); if(!rv) return;
+    if(!confirm(`¿Eliminar reserva de ${rv.nombre}?`)) return;
+    r.reservas=r.reservas.filter(x=>x.id!==reservaId);
+    r.ocupadas = r.reservas.reduce((s,rv)=>s+(rv.personas||0),0);
+    guardar();
+    logHistorial('Reserva eliminada',`${rv.nombre} (${rv.personas}p) · ${r.fecha} ${r.horaInicio}-${r.horaFin}`,r.fecha);
+    actualizarTabDot();
+    renderFormulario();
 }
 
 async function updateCampo(id,campo,valor){
@@ -969,14 +1030,26 @@ function renderTabla(){
         const cls=r.cancelada?'cancel':lib<=0?'red':lib<=3?'amber':'green';
         const lbl=r.cancelada?'🌊 Cancelada':lib<=0?'✕ Lleno':lib<=3?'⚠ Pocos':'✓ Libre';
         const fecha=new Date(r.fecha+'T12:00:00').toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'});
+        const reservasHtml=(r.reservas||[]).map(rv=>`
+            <div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--border);">
+                <div style="flex:1;min-width:0;">
+                    <div style="font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${rv.nombre}</div>
+                    <div style="font-size:11px;color:var(--text2)">${rv.telefono||'—'}</div>
+                </div>
+                <span style="background:var(--navy);color:white;border-radius:20px;padding:2px 7px;font-size:11px;font-weight:700;white-space:nowrap;flex-shrink:0">${rv.personas}p</span>
+            </div>`).join('');
         return `<tr>
             <td><strong>${fecha}</strong></td>
             <td style="white-space:nowrap">${r.horaInicio} – ${r.horaFin}</td>
             <td>${r.barcos}</td>
-            <td style="white-space:nowrap"><strong>${lib}</strong> / ${cap}</td>
-            <td><div class="mini-bar"><div class="mini-fill" style="width:${pct}%"></div></div><span style="font-size:11px;color:var(--text2)">${pct}%</span></td>
+            <td style="white-space:nowrap"><strong>${lib}</strong> / ${cap}
+                <div class="mini-bar"><div class="mini-fill" style="width:${pct}%"></div></div>
+            </td>
             <td><span class="pill pill-${cls}">${lbl}</span></td>
-            <td style="font-size:12px;color:var(--text2);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.notas||'—'}</td>
+            <td style="min-width:160px;max-width:220px">
+                ${reservasHtml||'<span style="font-size:11px;color:var(--text2)">Sin reservas</span>'}
+                ${r.notas?`<div style="font-size:11px;color:var(--amber);margin-top:4px">📝 ${r.notas}</div>`:''}
+            </td>
             <td><div class="row-actions">
                 <button class="btn btn-ghost btn-sm" onclick="abrirModalEditar('${r.id}')">Editar</button>
                 <button class="btn btn-danger btn-sm" onclick="eliminarRuta('${r.id}')">✕</button>
