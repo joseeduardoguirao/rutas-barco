@@ -12,702 +12,230 @@
     <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Rutas%20en%20Barco%22,%22short_name%22:%22Barco%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%230a2540%22,%22theme_color%22:%22%230a2540%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛵</text></svg>%22,%22sizes%22:%22any%22,%22type%22:%22image/svg+xml%22}]}">
     <style>
         :root {
-            --navy:    #0a2540;
-            --navy2:   #163860;
-            --teal:    #00b4d8;
-            --teal2:   #0096c7;
-            --sea:     #90e0ef;
-            --sand:    #f8f4ef;
-            --text:    #0d1b2a;
-            --text2:   #4a5568;
-            --border:  #dde3ec;
-            --card:    #ffffff;
-            --bg:      #f0f4f8;
-            --green:   #0d9e6e;
-            --greenb:  #e6f7f2;
-            --amber:   #d97706;
-            --amberb:  #fef3c7;
-            --red:     #dc2626;
-            --redb:    #fee2e2;
-            --radius:  14px;
-            --shadow:  0 2px 12px rgba(10,37,64,.08);
-            --shadow2: 0 8px 32px rgba(10,37,64,.14);
-        }
-
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --navy:   #0a2540;
-                --navy2:  #163860;
-                --sand:   #111d2e;
-                --text:   #e8edf3;
-                --text2:  #8ea4bf;
-                --border: #1e3352;
-                --card:   #142035;
-                --bg:     #0d1b2e;
-                --greenb: #0d2e22;
-                --amberb: #2d1f07;
-                --redb:   #2d0f0f;
-            }
-        }
-
-        :root[data-theme="light"] {
-            --sand:   #f0f4f8;
+            --navy:   #0a2540;
+            --navy2:  #163860;
+            --teal:   #00b4d8;
+            --teal2:  #0096c7;
             --text:   #0d1b2a;
             --text2:  #4a5568;
             --border: #dde3ec;
             --card:   #ffffff;
             --bg:     #f0f4f8;
+            --green:  #0d9e6e;
             --greenb: #e6f7f2;
+            --amber:  #d97706;
             --amberb: #fef3c7;
+            --red:    #dc2626;
             --redb:   #fee2e2;
+            --radius: 14px;
+            --shadow: 0 2px 12px rgba(10,37,64,.08);
+            --shadow2:0 8px 32px rgba(10,37,64,.14);
         }
-
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --text:   #e8edf3; --text2:  #8ea4bf; --border: #1e3352;
+                --card:   #142035; --bg:     #0d1b2e;
+                --greenb: #0d2e22; --amberb: #2d1f07; --redb:   #2d0f0f;
+            }
+        }
+        :root[data-theme="light"] {
+            --text:#0d1b2a;--text2:#4a5568;--border:#dde3ec;--card:#fff;--bg:#f0f4f8;
+            --greenb:#e6f7f2;--amberb:#fef3c7;--redb:#fee2e2;
+        }
         :root[data-theme="dark"] {
-            --sand:   #111d2e;
-            --text:   #e8edf3;
-            --text2:  #8ea4bf;
-            --border: #1e3352;
-            --card:   #142035;
-            --bg:     #0d1b2e;
-            --greenb: #0d2e22;
-            --amberb: #2d1f07;
-            --redb:   #2d0f0f;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            min-height: 100dvh;
-        }
-
-        /* ── HEADER ── */
-        .app-header {
-            background: linear-gradient(160deg, var(--navy) 0%, var(--navy2) 60%, #1a4a7a 100%);
-            color: white;
-            padding: 20px 20px 28px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .app-header::before {
-            content: '';
-            position: absolute;
-            bottom: -1px; left: 0; right: 0;
-            height: 28px;
-            background: var(--bg);
-            border-radius: 28px 28px 0 0;
-        }
-
-        .header-inner {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            max-width: 760px;
-            margin: 0 auto;
-        }
-
-        .header-icon {
-            font-size: 36px;
-            line-height: 1;
-            filter: drop-shadow(0 2px 6px rgba(0,180,216,.5));
-        }
-
-        .header-text h1 {
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: -.3px;
-        }
-
-        .header-text p {
-            font-size: 13px;
-            opacity: .7;
-            margin-top: 2px;
-        }
-
-        /* ── TABS ── */
-        .tabs-bar {
-            background: var(--bg);
-            max-width: 760px;
-            margin: 0 auto;
-            padding: 0 16px;
-            display: flex;
-            gap: 4px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 11px 6px 9px;
-            border: none;
-            background: none;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text2);
-            border-bottom: 3px solid transparent;
-            transition: color .2s, border-color .2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            line-height: 1.2;
-        }
-
-        .tab-btn .tab-icon { font-size: 18px; }
-
-        .tab-btn.active {
-            color: var(--teal2);
-            border-bottom-color: var(--teal2);
-        }
-
-        /* ── CONTENT ── */
-        .content { display: none; }
-        .content.active { display: block; }
-
-        .inner {
-            max-width: 760px;
-            margin: 0 auto;
-            padding: 20px 16px 100px;
-        }
-
-        /* ── SECTION TITLE ── */
-        .section-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 16px;
-        }
-
-        /* ── DATE SELECTOR ── */
-        .date-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .date-row label {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text2);
-        }
-
-        .date-input {
-            padding: 9px 14px;
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            font-size: 14px;
-            background: var(--card);
-            color: var(--text);
-            transition: border-color .2s;
-        }
-
-        .date-input:focus {
-            outline: none;
-            border-color: var(--teal);
-        }
-
-        /* ── EMPTY STATE ── */
-        .empty-state {
-            text-align: center;
-            padding: 36px 20px;
-            color: var(--text2);
-            font-size: 14px;
-            background: var(--card);
-            border-radius: var(--radius);
-            border: 2px dashed var(--border);
-            margin-bottom: 16px;
-        }
-
-        .empty-state p { margin-bottom: 16px; }
-
-        /* ── TURNO CARD ── */
-        .turnos-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 14px;
-            margin-bottom: 16px;
-        }
-
-        .turno-card {
-            background: var(--card);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            border: 1px solid var(--border);
-        }
-
-        .turno-card-head {
-            background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
-            color: white;
-            padding: 12px 14px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .turno-hora {
-            font-size: 17px;
-            font-weight: 700;
-            letter-spacing: -.3px;
-        }
-
-        .turno-barcos-badge {
-            background: rgba(255,255,255,.15);
-            border-radius: 20px;
-            padding: 3px 10px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .turno-body { padding: 14px; }
-
-        .field-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-
-        .field-group label {
-            display: block;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: .5px;
-            color: var(--text2);
-            margin-bottom: 5px;
-        }
-
-        .field-group input {
-            width: 100%;
-            padding: 8px 10px;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            font-size: 14px;
-            background: var(--bg);
-            color: var(--text);
-            transition: border-color .2s;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .field-group input:focus {
-            outline: none;
-            border-color: var(--teal);
-            background: var(--card);
-        }
-
-        /* ── PLAZAS METER ── */
-        .plazas-meter {
-            background: var(--bg);
-            border-radius: 10px;
-            padding: 12px;
-            margin-top: 4px;
-        }
-
-        .plazas-meter-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 8px;
-        }
-
-        .plazas-disponibles {
-            font-size: 22px;
-            font-weight: 800;
-            font-variant-numeric: tabular-nums;
-            line-height: 1;
-        }
-
-        .plazas-label {
-            font-size: 12px;
-            color: var(--text2);
-            font-weight: 500;
-        }
-
-        .plazas-total {
-            font-size: 12px;
-            color: var(--text2);
-        }
-
-        .bar-track {
-            height: 8px;
-            background: var(--border);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .bar-fill {
-            height: 100%;
-            border-radius: 4px;
-            transition: width .4s ease;
-        }
-
-        .bar-fill.libre   { background: linear-gradient(90deg, #0d9e6e, #38bdf8); }
-        .bar-fill.pocos   { background: linear-gradient(90deg, #f59e0b, #ef4444); }
-        .bar-fill.lleno   { background: #dc2626; }
-
-        .estado-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            margin-top: 8px;
-        }
-
-        .estado-pill.libre  { background: var(--greenb); color: var(--green); }
-        .estado-pill.pocos  { background: var(--amberb); color: var(--amber); }
-        .estado-pill.lleno  { background: var(--redb);   color: var(--red); }
-
-        .turno-actions {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 10px;
-        }
-
-        /* ── BOTÓN AÑADIR ── */
-        .add-card {
-            background: var(--card);
-            border-radius: var(--radius);
-            border: 2px dashed var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 160px;
-        }
-
-        /* ── BTN ── */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 9px 16px;
-            border: none;
-            border-radius: 9px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: opacity .15s, transform .15s, box-shadow .15s;
-        }
-
-        .btn:active { transform: scale(.97); }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--teal2), #0077b6);
-            color: white;
-            box-shadow: 0 3px 12px rgba(0,150,199,.3);
-        }
-
-        .btn-primary:hover { opacity: .9; box-shadow: 0 6px 18px rgba(0,150,199,.4); }
-
-        .btn-ghost {
-            background: var(--bg);
-            color: var(--text2);
-            border: 1px solid var(--border);
-        }
-
-        .btn-ghost:hover { background: var(--border); }
-
-        .btn-danger {
-            background: var(--redb);
-            color: var(--red);
-            border: 1px solid var(--red)22;
-        }
-
-        .btn-danger:hover { opacity: .85; }
-
-        .btn-wide { width: 100%; justify-content: center; padding: 13px; font-size: 15px; }
-
-        /* ── DASHBOARD ── */
-        .kpi-row {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        @media (min-width: 480px) {
-            .kpi-row { grid-template-columns: repeat(4, 1fr); }
-        }
-
-        .kpi-card {
-            background: var(--card);
-            border-radius: var(--radius);
-            padding: 16px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-            text-align: center;
-        }
-
-        .kpi-label {
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: .5px;
-            color: var(--text2);
-            margin-bottom: 8px;
-        }
-
-        .kpi-value {
-            font-size: 30px;
-            font-weight: 800;
-            font-variant-numeric: tabular-nums;
-            line-height: 1;
-            background: linear-gradient(135deg, var(--navy2), var(--teal2));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        /* ── FILTERS ── */
-        .filters {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
-
-        .filter-group { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 140px; }
-        .filter-group label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--text2); }
-        .filter-group select,
-        .filter-group input[type="date"] {
-            padding: 9px 12px;
-            border: 2px solid var(--border);
-            border-radius: 9px;
-            font-size: 13px;
-            background: var(--card);
-            color: var(--text);
-        }
-
-        /* ── TABLA ── */
-        .table-wrap { overflow-x: auto; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); }
-
-        table {
-            width: 100%;
-            min-width: 540px;
-            border-collapse: collapse;
-            background: var(--card);
-        }
-
-        thead tr {
-            background: var(--navy);
-            color: rgba(255,255,255,.85);
-        }
-
-        th {
-            padding: 12px 14px;
-            text-align: left;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: .6px;
-            white-space: nowrap;
-        }
-
-        td {
-            padding: 12px 14px;
-            border-bottom: 1px solid var(--border);
-            font-size: 13px;
-            font-variant-numeric: tabular-nums;
-        }
-
-        tr:last-child td { border-bottom: none; }
-        tr:hover td { background: var(--bg); }
-
-        .pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            white-space: nowrap;
-        }
-
-        .pill-green  { background: var(--greenb); color: var(--green); }
-        .pill-amber  { background: var(--amberb); color: var(--amber); }
-        .pill-red    { background: var(--redb);   color: var(--red); }
-
-        .mini-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-top: 5px; min-width: 60px; }
-        .mini-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #0d9e6e, #f59e0b 60%, #dc2626); }
-
-        .row-actions { display: flex; gap: 6px; }
-
-        /* ── HISTORIAL ── */
-        .hist-list { display: flex; flex-direction: column; gap: 10px; }
-
-        .hist-item {
-            background: var(--card);
-            border-radius: 10px;
-            padding: 14px;
-            border-left: 4px solid var(--teal);
-            box-shadow: var(--shadow);
-            cursor: pointer;
-            transition: box-shadow .15s, transform .15s;
-        }
-
-        .hist-item:hover {
-            box-shadow: var(--shadow2);
-            transform: translateY(-1px);
-        }
-
-        .hist-item:active { transform: scale(.98); }
-
-        .hist-ir {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--teal2);
-            margin-top: 8px;
-        }
-
-        .hist-item.no-link { cursor: default; }
-        .hist-item.no-link:hover { box-shadow: var(--shadow); transform: none; }
-
-        .hist-accion { font-weight: 700; font-size: 14px; }
-        .hist-detalle { font-size: 13px; color: var(--text2); margin-top: 3px; }
-        .hist-fecha { font-size: 11px; color: var(--text2); margin-top: 5px; opacity: .7; }
-
-        /* ── MODAL ── */
-        .modal {
-            display: none;
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,.55);
-            z-index: 1000;
-            align-items: flex-end;
-            justify-content: center;
-            padding: 0;
-        }
-
-        @media (min-width: 480px) {
-            .modal { align-items: center; padding: 20px; }
-        }
-
-        .modal.active { display: flex; }
-
-        .modal-box {
-            background: var(--card);
-            border-radius: 20px 20px 0 0;
-            padding: 24px;
-            width: 100%;
-            max-width: 420px;
-            box-shadow: var(--shadow2);
-        }
-
-        @media (min-width: 480px) {
-            .modal-box { border-radius: 20px; }
-        }
-
-        .modal-box h2 { font-size: 18px; font-weight: 700; margin-bottom: 18px; }
-
-        .modal-fields { display: flex; flex-direction: column; gap: 12px; }
-
-        .modal-field label {
-            display: block;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: .5px;
-            color: var(--text2);
-            margin-bottom: 5px;
-        }
-
-        .modal-field input {
-            width: 100%;
-            padding: 10px 12px;
-            border: 2px solid var(--border);
-            border-radius: 9px;
-            font-size: 14px;
-            background: var(--bg);
-            color: var(--text);
-            transition: border-color .2s;
-        }
-
-        .modal-field input:focus { outline: none; border-color: var(--teal); background: var(--card); }
-
-        .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
-        .modal-btns .btn { flex: 1; justify-content: center; }
-
-        /* ── TOAST ── */
-        .toast {
-            position: fixed;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%) translateY(20px);
-            background: var(--navy);
-            color: white;
-            padding: 11px 20px;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: 600;
-            box-shadow: var(--shadow2);
-            opacity: 0;
-            transition: opacity .3s, transform .3s;
-            pointer-events: none;
-            white-space: nowrap;
-            z-index: 2000;
-        }
-
-        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-        /* ── INSTALL BTN ── */
-        #installBanner {
-            display: none;
-            background: linear-gradient(135deg, var(--teal2), #0077b6);
-            color: white;
-            padding: 12px 16px;
-            text-align: center;
-            font-size: 13px;
-            font-weight: 600;
-            gap: 10px;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #installBanner.visible { display: flex; }
-
-        #installBanner button {
-            background: white;
-            color: var(--navy);
-            border: none;
-            border-radius: 8px;
-            padding: 6px 14px;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        #installBanner .close-banner {
-            background: transparent;
-            color: white;
-            margin-left: 4px;
-            padding: 6px 8px;
-            opacity: .7;
-        }
-
-        /* ── EMPTY TABLE ── */
-        .table-empty {
-            text-align: center;
-            padding: 40px;
-            color: var(--text2);
-            font-size: 14px;
-        }
-
-        /* ── NAV BOTTOM (mobile) ── */
-        @media (max-width: 600px) {
-            .app-header { padding-bottom: 32px; }
-            .tabs-bar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--card); border-top: 1px solid var(--border); padding: 4px 8px env(safe-area-inset-bottom); box-shadow: 0 -4px 20px rgba(0,0,0,.08); }
-            .inner { padding-bottom: 120px; }
+            --text:#e8edf3;--text2:#8ea4bf;--border:#1e3352;--card:#142035;--bg:#0d1b2e;
+            --greenb:#0d2e22;--amberb:#2d1f07;--redb:#2d0f0f;
+        }
+
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;min-height:100dvh;}
+
+        /* HEADER */
+        .app-header{background:linear-gradient(160deg,var(--navy) 0%,var(--navy2) 60%,#1a4a7a 100%);color:white;padding:20px 20px 30px;position:relative;overflow:hidden;}
+        .app-header::before{content:'';position:absolute;bottom:-1px;left:0;right:0;height:28px;background:var(--bg);border-radius:28px 28px 0 0;}
+        .header-inner{display:flex;align-items:center;gap:12px;max-width:760px;margin:0 auto;}
+        .header-icon{font-size:36px;line-height:1;filter:drop-shadow(0 2px 6px rgba(0,180,216,.5));}
+        .header-text h1{font-size:22px;font-weight:700;letter-spacing:-.3px;}
+        .header-text p{font-size:13px;opacity:.7;margin-top:2px;}
+
+        /* TABS */
+        .tabs-bar{background:var(--bg);max-width:760px;margin:0 auto;padding:0 16px;display:flex;gap:4px;}
+        .tab-btn{flex:1;padding:11px 6px 9px;border:none;background:none;cursor:pointer;font-size:12px;font-weight:600;color:var(--text2);border-bottom:3px solid transparent;transition:color .2s,border-color .2s;display:flex;flex-direction:column;align-items:center;gap:4px;line-height:1.2;position:relative;}
+        .tab-btn .tab-icon{font-size:18px;}
+        .tab-btn.active{color:var(--teal2);border-bottom-color:var(--teal2);}
+        .tab-dot{position:absolute;top:6px;right:calc(50% - 14px);width:8px;height:8px;border-radius:50%;display:none;}
+        .tab-dot.red{background:var(--red);display:block;}
+        .tab-dot.amber{background:var(--amber);display:block;}
+
+        /* CONTENT */
+        .content{display:none;}
+        .content.active{display:block;}
+        .inner{max-width:760px;margin:0 auto;padding:20px 16px 100px;}
+
+        /* SECTION TITLE */
+        .section-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:16px;}
+
+        /* DATE ROW */
+        .date-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+        .date-row label{font-size:13px;font-weight:600;color:var(--text2);}
+        .date-input{padding:9px 14px;border:2px solid var(--border);border-radius:10px;font-size:14px;background:var(--card);color:var(--text);transition:border-color .2s;}
+        .date-input:focus{outline:none;border-color:var(--teal);}
+
+        /* TOOLBAR ROW */
+        .toolbar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
+
+        /* EMPTY STATE */
+        .empty-state{text-align:center;padding:36px 20px;color:var(--text2);font-size:14px;background:var(--card);border-radius:var(--radius);border:2px dashed var(--border);margin-bottom:16px;grid-column:1/-1;}
+        .empty-state p{margin-bottom:16px;}
+
+        /* TURNOS GRID */
+        .turnos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:16px;}
+
+        /* TURNO CARD */
+        .turno-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--border);transition:border-color .3s,box-shadow .3s;}
+        .turno-card.sobreocupado{border-color:var(--red);box-shadow:0 0 0 3px rgba(220,38,38,.15);}
+        .turno-card.saved{border-color:var(--green);box-shadow:0 0 0 3px rgba(13,158,110,.15);}
+
+        .turno-card-head{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);color:white;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;}
+        .turno-hora{font-size:17px;font-weight:700;letter-spacing:-.3px;}
+        .turno-barcos-badge{background:rgba(255,255,255,.15);border-radius:20px;padding:3px 10px;font-size:12px;font-weight:600;}
+
+        .turno-body{padding:14px;}
+
+        /* MODO RÁPIDO */
+        .modo-rapido-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;padding:8px 0;}
+        .ocupadas-big{font-size:56px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1;text-align:center;width:120px;border:none;border-bottom:3px solid var(--teal);background:transparent;color:var(--text);outline:none;}
+        .ocupadas-big:focus{border-bottom-color:var(--navy);}
+        .ocupadas-label{font-size:12px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+
+        /* FULL MODE FIELDS */
+        .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+        .field-group label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:5px;}
+        .field-group input,.field-group textarea{width:100%;padding:8px 10px;border:2px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg);color:var(--text);transition:border-color .2s;font-family:inherit;}
+        .field-group textarea{resize:vertical;min-height:52px;font-size:13px;}
+        .field-group input:focus,.field-group textarea:focus{outline:none;border-color:var(--teal);background:var(--card);}
+
+        /* PLAZAS METER */
+        .plazas-meter{background:var(--bg);border-radius:10px;padding:12px;margin-top:4px;}
+        .plazas-meter-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;}
+        .plazas-disponibles{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1;}
+        .plazas-label{font-size:12px;color:var(--text2);font-weight:500;}
+        .plazas-total{font-size:12px;color:var(--text2);}
+        .bar-track{height:8px;background:var(--border);border-radius:4px;overflow:hidden;}
+        .bar-fill{height:100%;border-radius:4px;transition:width .4s ease;}
+        .bar-fill.libre{background:linear-gradient(90deg,#0d9e6e,#38bdf8);}
+        .bar-fill.pocos{background:linear-gradient(90deg,#f59e0b,#ef4444);}
+        .bar-fill.lleno{background:#dc2626;}
+        .bar-fill.sobre{background:#7c0000;}
+        .estado-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;margin-top:8px;}
+        .estado-pill.libre{background:var(--greenb);color:var(--green);}
+        .estado-pill.pocos{background:var(--amberb);color:var(--amber);}
+        .estado-pill.lleno{background:var(--redb);color:var(--red);}
+        .estado-pill.sobre{background:#7c000022;color:#7c0000;border:1px solid #7c000044;}
+
+        .turno-actions{display:flex;justify-content:space-between;align-items:center;margin-top:10px;}
+        .saved-tick{font-size:12px;font-weight:700;color:var(--green);opacity:0;transition:opacity .3s;}
+        .saved-tick.show{opacity:1;}
+
+        /* NOTA BADGE */
+        .nota-badge{font-size:11px;color:var(--amber);background:var(--amberb);border-radius:6px;padding:2px 7px;margin-top:6px;display:inline-block;}
+
+        /* ADD CARD */
+        .add-card{background:var(--card);border-radius:var(--radius);border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;min-height:120px;}
+
+        /* BTNS */
+        .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .15s,transform .15s,box-shadow .15s;}
+        .btn:active{transform:scale(.97);}
+        .btn-primary{background:linear-gradient(135deg,var(--teal2),#0077b6);color:white;box-shadow:0 3px 12px rgba(0,150,199,.3);}
+        .btn-primary:hover{opacity:.9;box-shadow:0 6px 18px rgba(0,150,199,.4);}
+        .btn-ghost{background:var(--bg);color:var(--text2);border:1px solid var(--border);}
+        .btn-ghost:hover{background:var(--border);}
+        .btn-ghost.active-mode{background:var(--navy);color:white;border-color:var(--navy);}
+        .btn-danger{background:var(--redb);color:var(--red);border:1px solid rgba(220,38,38,.15);}
+        .btn-danger:hover{opacity:.85;}
+        .btn-green{background:var(--greenb);color:var(--green);border:1px solid rgba(13,158,110,.2);}
+        .btn-green:hover{opacity:.85;}
+        .btn-wide{width:100%;justify-content:center;padding:13px;font-size:15px;}
+        .btn-sm{padding:6px 10px;font-size:12px;}
+
+        /* DASHBOARD */
+        .kpi-row{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;}
+        @media(min-width:480px){.kpi-row{grid-template-columns:repeat(4,1fr);}}
+        .kpi-card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);border:1px solid var(--border);text-align:center;}
+        .kpi-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:8px;}
+        .kpi-value{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1;background:linear-gradient(135deg,var(--navy2),var(--teal2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+        /* WA EXPORT */
+        .wa-btn{background:#25D366;color:white;border:none;}
+        .wa-btn:hover{opacity:.9;}
+
+        /* FILTERS */
+        .filters{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+        .filter-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:140px;}
+        .filter-group label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);}
+        .filter-group select,.filter-group input[type="date"]{padding:9px 12px;border:2px solid var(--border);border-radius:9px;font-size:13px;background:var(--card);color:var(--text);}
+
+        /* TABLA */
+        .table-wrap{overflow-x:auto;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);}
+        table{width:100%;min-width:540px;border-collapse:collapse;background:var(--card);}
+        thead tr{background:var(--navy);color:rgba(255,255,255,.85);}
+        th{padding:12px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;white-space:nowrap;}
+        td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;font-variant-numeric:tabular-nums;}
+        tr:last-child td{border-bottom:none;}
+        tr:hover td{background:var(--bg);}
+        .pill{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;}
+        .pill-green{background:var(--greenb);color:var(--green);}
+        .pill-amber{background:var(--amberb);color:var(--amber);}
+        .pill-red{background:var(--redb);color:var(--red);}
+        .mini-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:5px;min-width:60px;}
+        .mini-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#0d9e6e,#f59e0b 60%,#dc2626);}
+        .row-actions{display:flex;gap:6px;}
+        .table-empty{text-align:center;padding:40px;color:var(--text2);font-size:14px;}
+
+        /* HISTORIAL */
+        .hist-list{display:flex;flex-direction:column;gap:10px;}
+        .hist-item{background:var(--card);border-radius:10px;padding:14px;border-left:4px solid var(--teal);box-shadow:var(--shadow);cursor:pointer;transition:box-shadow .15s,transform .15s;}
+        .hist-item:hover{box-shadow:var(--shadow2);transform:translateY(-1px);}
+        .hist-item:active{transform:scale(.98);}
+        .hist-item.no-link{cursor:default;}
+        .hist-item.no-link:hover{box-shadow:var(--shadow);transform:none;}
+        .hist-accion{font-weight:700;font-size:14px;}
+        .hist-detalle{font-size:13px;color:var(--text2);margin-top:3px;}
+        .hist-fecha{font-size:11px;color:var(--text2);margin-top:5px;opacity:.7;}
+        .hist-ir{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--teal2);margin-top:8px;}
+
+        /* MODAL */
+        .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;align-items:flex-end;justify-content:center;padding:0;}
+        @media(min-width:480px){.modal{align-items:center;padding:20px;}}
+        .modal.active{display:flex;}
+        .modal-box{background:var(--card);border-radius:20px 20px 0 0;padding:24px;width:100%;max-width:420px;box-shadow:var(--shadow2);}
+        @media(min-width:480px){.modal-box{border-radius:20px;}}
+        .modal-box h2{font-size:18px;font-weight:700;margin-bottom:18px;}
+        .modal-fields{display:flex;flex-direction:column;gap:12px;}
+        .modal-field label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:5px;}
+        .modal-field input,.modal-field textarea{width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:9px;font-size:14px;background:var(--bg);color:var(--text);transition:border-color .2s;font-family:inherit;}
+        .modal-field textarea{resize:vertical;min-height:60px;}
+        .modal-field input:focus,.modal-field textarea:focus{outline:none;border-color:var(--teal);background:var(--card);}
+        .modal-btns{display:flex;gap:10px;margin-top:20px;}
+        .modal-btns .btn{flex:1;justify-content:center;}
+
+        /* TOAST */
+        .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:white;padding:11px 20px;border-radius:30px;font-size:13px;font-weight:600;box-shadow:var(--shadow2);opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap;z-index:2000;}
+        .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+        /* WA MODAL */
+        .wa-text{width:100%;min-height:120px;padding:12px;border:2px solid var(--border);border-radius:9px;font-size:13px;font-family:inherit;background:var(--bg);color:var(--text);resize:vertical;}
+
+        /* INSTALL BANNER */
+        #installBanner{display:none;background:linear-gradient(135deg,var(--teal2),#0077b6);color:white;padding:12px 16px;text-align:center;font-size:13px;font-weight:600;gap:10px;align-items:center;justify-content:center;}
+        #installBanner.visible{display:flex;}
+        #installBanner button{background:white;color:var(--navy);border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;}
+        #installBanner .close-banner{background:transparent;color:white;margin-left:4px;padding:6px 8px;opacity:.7;}
+
+        @media(max-width:600px){
+            .app-header{padding-bottom:32px;}
+            .tabs-bar{position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--card);border-top:1px solid var(--border);padding:4px 8px env(safe-area-inset-bottom);box-shadow:0 -4px 20px rgba(0,0,0,.08);}
+            .inner{padding-bottom:120px;}
         }
     </style>
 </head>
@@ -730,17 +258,15 @@
 </header>
 
 <nav class="tabs-bar" id="tabsBar">
-    <button class="tab-btn active" onclick="cambiarTab('angel', this)">
-        <span class="tab-icon">✏️</span>
-        Actualizar
+    <button class="tab-btn active" onclick="cambiarTab('angel',this)">
+        <span class="tab-icon">✏️</span>Actualizar
     </button>
-    <button class="tab-btn" onclick="cambiarTab('edu', this)">
-        <span class="tab-icon">📊</span>
-        Control
+    <button class="tab-btn" onclick="cambiarTab('edu',this)">
+        <span class="tab-icon">📊</span>Control
+        <span class="tab-dot" id="tabDot"></span>
     </button>
-    <button class="tab-btn" onclick="cambiarTab('historial', this)">
-        <span class="tab-icon">📋</span>
-        Historial
+    <button class="tab-btn" onclick="cambiarTab('historial',this)">
+        <span class="tab-icon">📋</span>Historial
     </button>
 </nav>
 
@@ -748,17 +274,12 @@
 <div id="angel" class="content active">
     <div class="inner">
         <p class="section-title">Actualizar plazas</p>
-
         <div class="date-row">
             <label for="fechaInput">Fecha</label>
             <input type="date" id="fechaInput" class="date-input">
         </div>
-
+        <div class="toolbar" id="angelToolbar"></div>
         <div id="horariosList" class="turnos-grid"></div>
-
-        <button class="btn btn-ghost btn-wide" onclick="resetFecha()" style="margin-top:8px;">
-            Limpiar
-        </button>
     </div>
 </div>
 
@@ -766,14 +287,12 @@
 <div id="edu" class="content">
     <div class="inner">
         <p class="section-title">Dashboard</p>
-
         <div class="kpi-row">
             <div class="kpi-card"><div class="kpi-label">Rutas</div><div class="kpi-value" id="kpiRutas">0</div></div>
             <div class="kpi-card"><div class="kpi-label">Disponibles</div><div class="kpi-value" id="kpiDisp">0</div></div>
             <div class="kpi-card"><div class="kpi-label">Ocupadas</div><div class="kpi-value" id="kpiOcup">0</div></div>
             <div class="kpi-card"><div class="kpi-label">Ocupación</div><div class="kpi-value" id="kpiTasa">0%</div></div>
         </div>
-
         <div class="filters">
             <div class="filter-group">
                 <label>Fecha</label>
@@ -789,23 +308,13 @@
                 </select>
             </div>
         </div>
-
+        <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+            <button class="btn wa-btn btn-sm" onclick="abrirModalWA()">📲 Exportar WhatsApp</button>
+        </div>
         <div class="table-wrap">
             <table>
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Horario</th>
-                        <th>Barcos</th>
-                        <th>Libre / Total</th>
-                        <th>Ocupación</th>
-                        <th>Estado</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody id="tablaBody">
-                    <tr><td colspan="7" class="table-empty">Cargando…</td></tr>
-                </tbody>
+                <thead><tr><th>Fecha</th><th>Horario</th><th>Barcos</th><th>Libre/Total</th><th>Ocupación</th><th>Estado</th><th>Nota</th><th></th></tr></thead>
+                <tbody id="tablaBody"><tr><td colspan="8" class="table-empty">Cargando…</td></tr></tbody>
             </table>
         </div>
     </div>
@@ -824,32 +333,36 @@
     <div class="modal-box">
         <h2>Editar turno</h2>
         <div class="modal-fields">
-            <div class="modal-field">
-                <label>Fecha</label>
-                <input type="text" id="mFecha" readonly style="opacity:.6;">
-            </div>
+            <div class="modal-field"><label>Fecha</label><input type="text" id="mFecha" readonly style="opacity:.6;"></div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-                <div class="modal-field">
-                    <label>Inicio</label>
-                    <input type="time" id="mInicio">
-                </div>
-                <div class="modal-field">
-                    <label>Fin</label>
-                    <input type="time" id="mFin">
-                </div>
+                <div class="modal-field"><label>Inicio</label><input type="time" id="mInicio"></div>
+                <div class="modal-field"><label>Fin</label><input type="time" id="mFin"></div>
             </div>
-            <div class="modal-field">
-                <label>Nº barcos (1-2)</label>
-                <input type="number" id="mBarcos" min="1" max="2">
-            </div>
-            <div class="modal-field">
-                <label>Plazas ocupadas</label>
-                <input type="number" id="mOcupadas" min="0">
-            </div>
+            <div class="modal-field"><label>Nº barcos (1-2)</label><input type="number" id="mBarcos" min="1" max="2"></div>
+            <div class="modal-field"><label>Plazas ocupadas</label><input type="number" id="mOcupadas" min="0"></div>
+            <div class="modal-field"><label>Nota (opcional)</label><textarea id="mNota" placeholder="Ej: grupo reservado, mal tiempo…"></textarea></div>
         </div>
         <div class="modal-btns">
             <button class="btn btn-primary" onclick="guardarEdicion()">Guardar</button>
             <button class="btn btn-ghost" onclick="cerrarModal()">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL WHATSAPP -->
+<div id="waModal" class="modal" onclick="if(event.target===this)cerrarWA()">
+    <div class="modal-box">
+        <h2>📲 Exportar a WhatsApp</h2>
+        <div style="margin-bottom:12px;">
+            <div class="filter-group" style="margin-bottom:10px;">
+                <label>Fecha a exportar</label>
+                <input type="date" id="waFecha" onchange="generarTextoWA()">
+            </div>
+        </div>
+        <textarea class="wa-text" id="waTexto" readonly></textarea>
+        <div class="modal-btns">
+            <button class="btn btn-primary" onclick="copiarWA()">📋 Copiar texto</button>
+            <button class="btn btn-ghost" onclick="cerrarWA()">Cerrar</button>
         </div>
     </div>
 </div>
@@ -860,396 +373,430 @@
 // ── CONSTANTES ──
 const PLAZAS_POR_BARCO = 12;
 const PLANTILLA = [
-    { horaInicio:'09:00', horaFin:'11:00' },
-    { horaInicio:'10:00', horaFin:'12:00' },
-    { horaInicio:'11:00', horaFin:'13:00' },
-    { horaInicio:'12:00', horaFin:'14:00' },
-    { horaInicio:'13:00', horaFin:'15:00' },
-    { horaInicio:'14:00', horaFin:'16:00' },
-    { horaInicio:'16:00', horaFin:'18:00' },
-    { horaInicio:'17:00', horaFin:'19:00' },
-    { horaInicio:'18:00', horaFin:'20:00' },
-    { horaInicio:'19:00', horaFin:'21:00' },
+    {horaInicio:'09:00',horaFin:'11:00'},{horaInicio:'10:00',horaFin:'12:00'},
+    {horaInicio:'11:00',horaFin:'13:00'},{horaInicio:'12:00',horaFin:'14:00'},
+    {horaInicio:'13:00',horaFin:'15:00'},{horaInicio:'14:00',horaFin:'16:00'},
+    {horaInicio:'16:00',horaFin:'18:00'},{horaInicio:'17:00',horaFin:'19:00'},
+    {horaInicio:'18:00',horaFin:'20:00'},{horaInicio:'19:00',horaFin:'21:00'},
 ];
-
-function sumar2h(hora) {
-    const [h, m] = hora.split(':').map(Number);
-    return String(h + 2).padStart(2, '0') + ':' + String(m).padStart(2, '0');
-}
 
 // ── ESTADO ──
 let rutasData = [];
 let historial  = [];
 let editId     = null;
+let modoRapido = false;
 
-function genId() { return 't_' + Date.now() + '_' + Math.random().toString(36).slice(2,8); }
+function genId(){ return 't_'+Date.now()+'_'+Math.random().toString(36).slice(2,8); }
+function hoy(){ return new Date().toISOString().split('T')[0]; }
+function sumar2h(hora){ const [h,m]=hora.split(':').map(Number); return String(h+2).padStart(2,'0')+':'+String(m).padStart(2,'0'); }
 
 // ── STORAGE ──
-function cargar() {
-    try { const d = localStorage.getItem('rutasData'); if (d) rutasData = JSON.parse(d); } catch(e) { rutasData = []; }
-    try { const h = localStorage.getItem('histData');  if (h) historial  = JSON.parse(h);  } catch(e) { historial = []; }
+function cargar(){
+    try{ const d=localStorage.getItem('rutasData'); if(d) rutasData=JSON.parse(d); }catch(e){ rutasData=[]; }
+    try{ const h=localStorage.getItem('histData');  if(h) historial=JSON.parse(h);  }catch(e){ historial=[]; }
     migrar();
 }
-
-function guardar() {
-    localStorage.setItem('rutasData', JSON.stringify(rutasData));
-    localStorage.setItem('histData',  JSON.stringify(historial));
+function guardar(){
+    localStorage.setItem('rutasData',JSON.stringify(rutasData));
+    localStorage.setItem('histData', JSON.stringify(historial));
 }
-
-function migrar() {
-    rutasData.forEach(r => {
-        if (!r.id) r.id = genId();
-        if (!r.horaInicio && r.hora) {
-            const p = r.hora.split('-');
-            r.horaInicio = p[0] || '09:00';
-            r.horaFin    = p[1] || '11:00';
-            delete r.hora;
-        }
+function migrar(){
+    rutasData.forEach(r=>{
+        if(!r.id) r.id=genId();
+        if(!r.horaInicio&&r.hora){ const p=r.hora.split('-'); r.horaInicio=p[0]||'09:00'; r.horaFin=p[1]||'11:00'; delete r.hora; }
+        if(!r.notas) r.notas='';
     });
 }
-
-function logHistorial(accion, detalles, fechaRuta) {
-    historial.unshift({ fecha: new Date().toLocaleString('es-ES'), accion, detalles, fechaRuta: fechaRuta || null });
-    if (historial.length > 100) historial.pop();
+function logHistorial(accion,detalles,fechaRuta){
+    historial.unshift({fecha:new Date().toLocaleString('es-ES'),accion,detalles,fechaRuta:fechaRuta||null});
+    if(historial.length>100) historial.pop();
     guardar();
 }
 
 // ── TOAST ──
-function toast(msg) {
-    const el = document.getElementById('toast');
-    el.textContent = msg;
-    el.classList.add('show');
-    clearTimeout(el._t);
-    el._t = setTimeout(() => el.classList.remove('show'), 2400);
+function toast(msg){
+    const el=document.getElementById('toast');
+    el.textContent=msg; el.classList.add('show');
+    clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),2400);
+}
+
+// ── TAB DOT (semáforo) ──
+function actualizarTabDot(){
+    const hoyStr = hoy();
+    const turnos = rutasData.filter(r=>r.fecha===hoyStr);
+    const dot = document.getElementById('tabDot');
+    if(!turnos.length){ dot.className='tab-dot'; return; }
+    const hayLleno  = turnos.some(r=>(r.barcos*PLAZAS_POR_BARCO - r.ocupadas)===0);
+    const hayPocos  = turnos.some(r=>{ const l=r.barcos*PLAZAS_POR_BARCO-r.ocupadas; return l>0&&l<=3; });
+    if(hayLleno)     dot.className='tab-dot red';
+    else if(hayPocos) dot.className='tab-dot amber';
+    else              dot.className='tab-dot';
 }
 
 // ── TAB ──
-function cambiarTab(id, btn) {
-    document.querySelectorAll('.content').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+function cambiarTab(id,btn){
+    document.querySelectorAll('.content').forEach(el=>el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     btn.classList.add('active');
-    if (id === 'edu') renderDashboard();
-    if (id === 'historial') renderHistorial();
+    if(id==='edu')      renderDashboard();
+    if(id==='historial') renderHistorial();
 }
 
-// ── ÁNGEL: FORMULARIO ──
-function initAngel() {
-    const hoy = new Date().toISOString().split('T')[0];
-    const inp = document.getElementById('fechaInput');
-    inp.value = hoy;
-    inp.addEventListener('change', renderFormulario);
+// ── ÁNGEL ──
+function initAngel(){
+    const inp=document.getElementById('fechaInput');
+    inp.value=hoy();
+    inp.addEventListener('change',renderFormulario);
     renderFormulario();
 }
 
-function renderFormulario() {
-    const fecha = document.getElementById('fechaInput').value;
-    if (!fecha) return;
-
-    const turnos = rutasData
-        .filter(r => r.fecha === fecha)
-        .sort((a, b) => a.horaInicio.localeCompare(b.horaInicio));
-
-    let html = '';
-
-    if (turnos.length === 0) {
-        html += `
-            <div class="empty-state" style="grid-column:1/-1">
-                <p>No hay turnos para este día todavía.</p>
-                <button class="btn btn-primary" onclick="usarPlantilla('${fecha}')">
-                    ⚡ Crear turnos estándar
-                </button>
-            </div>`;
+function renderToolbar(fecha){
+    const turnosDelDia = rutasData.filter(r=>r.fecha===fecha);
+    const hayAyer = (() => {
+        const d=new Date(fecha+'T12:00:00'); d.setDate(d.getDate()-1);
+        const ayer=d.toISOString().split('T')[0];
+        return rutasData.some(r=>r.fecha===ayer);
+    })();
+    let html='';
+    if(turnosDelDia.length>0){
+        html+=`<button class="btn btn-ghost btn-sm ${modoRapido?'active-mode':''}" onclick="toggleModoRapido()">
+            ${modoRapido?'📋 Modo completo':'⚡ Modo rápido'}
+        </button>`;
     }
-
-    turnos.forEach(r => {
-        const cap  = r.barcos * PLAZAS_POR_BARCO;
-        const lib  = cap - r.ocupadas;
-        const pct  = Math.round((r.ocupadas / cap) * 100);
-        const cls  = lib === 0 ? 'lleno' : lib <= 3 ? 'pocos' : 'libre';
-        const label = lib === 0 ? '✕ Lleno' : lib <= 3 ? '⚠ Pocos huecos' : '✓ Disponible';
-        const fillCls = cls;
-
-        html += `
-        <div class="turno-card">
-            <div class="turno-card-head">
-                <span class="turno-hora">${r.horaInicio} – ${r.horaFin}</span>
-                <span class="turno-barcos-badge">🚤 ${r.barcos} barco${r.barcos>1?'s':''}</span>
-            </div>
-            <div class="turno-body">
-                <div class="field-row">
-                    <div class="field-group">
-                        <label>Inicio</label>
-                        <input type="time" value="${r.horaInicio}"
-                            onchange="updateCampo('${r.id}','horaInicio',this.value)">
-                    </div>
-                    <div class="field-group">
-                        <label>Fin</label>
-                        <input type="time" value="${r.horaFin}"
-                            onchange="updateCampo('${r.id}','horaFin',this.value)">
-                    </div>
-                </div>
-                <div class="field-row">
-                    <div class="field-group">
-                        <label>Nº barcos</label>
-                        <input type="number" min="1" max="2" value="${r.barcos}"
-                            onchange="updateCampo('${r.id}','barcos',this.value)">
-                    </div>
-                    <div class="field-group">
-                        <label>Ocupadas</label>
-                        <input type="number" min="0" max="${cap}" value="${r.ocupadas}"
-                            onchange="updateCampo('${r.id}','ocupadas',this.value)">
-                    </div>
-                </div>
-                <div class="plazas-meter">
-                    <div class="plazas-meter-top">
-                        <div>
-                            <div class="plazas-disponibles" style="color:${cls==='libre'?'var(--green)':cls==='pocos'?'var(--amber)':'var(--red)'}">${lib}</div>
-                            <div class="plazas-label">plazas libres</div>
-                        </div>
-                        <div class="plazas-total">de ${cap} total</div>
-                    </div>
-                    <div class="bar-track">
-                        <div class="bar-fill ${fillCls}" style="width:${pct}%"></div>
-                    </div>
-                    <span class="estado-pill ${cls}">${label}</span>
-                </div>
-                <div class="turno-actions">
-                    <button class="btn btn-danger" onclick="eliminarTurno('${r.id}')">✕ Borrar turno</button>
-                </div>
-            </div>
-        </div>`;
-    });
-
-    html += `
-        <div class="add-card">
-            <button class="btn btn-primary" onclick="agregarTurno('${fecha}')">＋ Añadir turno</button>
-        </div>`;
-
-    document.getElementById('horariosList').innerHTML = html;
+    if(hayAyer){
+        html+=`<button class="btn btn-ghost btn-sm" onclick="copiarDiaAnterior('${fecha}')">📅 Copiar día anterior</button>`;
+    }
+    document.getElementById('angelToolbar').innerHTML=html;
 }
 
-async function usarPlantilla(fecha) {
-    PLANTILLA.forEach(t => {
-        rutasData.push({ id: genId(), fecha, horaInicio: t.horaInicio, horaFin: t.horaFin, barcos: 1, ocupadas: 0 });
+function toggleModoRapido(){
+    modoRapido=!modoRapido;
+    const fecha=document.getElementById('fechaInput').value;
+    renderToolbar(fecha);
+    renderFormulario();
+}
+
+function renderFormulario(){
+    const fecha=document.getElementById('fechaInput').value;
+    if(!fecha) return;
+    renderToolbar(fecha);
+
+    const turnos=rutasData.filter(r=>r.fecha===fecha).sort((a,b)=>a.horaInicio.localeCompare(b.horaInicio));
+    let html='';
+
+    if(turnos.length===0){
+        html+=`<div class="empty-state">
+            <p>No hay turnos para este día todavía.</p>
+            <button class="btn btn-primary" onclick="usarPlantilla('${fecha}')">⚡ Crear turnos estándar</button>
+        </div>`;
+    }
+
+    turnos.forEach(r=>{
+        const cap=r.barcos*PLAZAS_POR_BARCO;
+        const lib=cap-r.ocupadas;
+        const sobre=lib<0;
+        const pct=Math.min(Math.round((r.ocupadas/cap)*100),100);
+        const cls=sobre?'sobre':lib===0?'lleno':lib<=3?'pocos':'libre';
+        const label=sobre?'⛔ Sobreocupado':lib===0?'✕ Lleno':lib<=3?'⚠ Pocos huecos':'✓ Disponible';
+        const cardCls=sobre?'sobreocupado':'';
+        const notaBadge=r.notas?`<div class="nota-badge">📝 ${r.notas}</div>`:'';
+
+        if(modoRapido){
+            html+=`
+            <div class="turno-card ${cardCls}" id="card-${r.id}">
+                <div class="turno-card-head">
+                    <span class="turno-hora">${r.horaInicio} – ${r.horaFin}</span>
+                    <span class="turno-barcos-badge">🚤 ${r.barcos}</span>
+                </div>
+                <div class="turno-body">
+                    <div class="modo-rapido-wrap">
+                        <div class="ocupadas-label">Plazas ocupadas</div>
+                        <input class="ocupadas-big" type="number" min="0" max="${cap+5}" value="${r.ocupadas}"
+                            onchange="updateCampo('${r.id}','ocupadas',this.value)"
+                            style="color:${sobre?'var(--red)':cls==='lleno'?'var(--red)':cls==='pocos'?'var(--amber)':'var(--text)'}">
+                        <div class="plazas-label" style="color:${sobre?'var(--red)':'var(--text2)'}">
+                            ${sobre?'⛔ '+Math.abs(lib)+' de más':'de '+cap+' totales'}
+                        </div>
+                    </div>
+                    <div class="bar-track" style="margin-top:8px;"><div class="bar-fill ${cls}" style="width:${pct}%"></div></div>
+                    ${notaBadge}
+                    <div class="turno-actions">
+                        <span class="saved-tick" id="tick-${r.id}">✓ Guardado</span>
+                        <button class="btn btn-ghost btn-sm" onclick="abrirModalEditar('${r.id}')">Editar más</button>
+                    </div>
+                </div>
+            </div>`;
+        } else {
+            html+=`
+            <div class="turno-card ${cardCls}" id="card-${r.id}">
+                <div class="turno-card-head">
+                    <span class="turno-hora">${r.horaInicio} – ${r.horaFin}</span>
+                    <span class="turno-barcos-badge">🚤 ${r.barcos} barco${r.barcos>1?'s':''}</span>
+                </div>
+                <div class="turno-body">
+                    <div class="field-row">
+                        <div class="field-group"><label>Inicio</label>
+                            <input type="time" value="${r.horaInicio}" onchange="updateCampo('${r.id}','horaInicio',this.value)"></div>
+                        <div class="field-group"><label>Fin</label>
+                            <input type="time" value="${r.horaFin}" onchange="updateCampo('${r.id}','horaFin',this.value)"></div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group"><label>Nº barcos</label>
+                            <input type="number" min="1" max="2" value="${r.barcos}" onchange="updateCampo('${r.id}','barcos',this.value)"></div>
+                        <div class="field-group"><label>Ocupadas</label>
+                            <input type="number" min="0" max="${cap+5}" value="${r.ocupadas}" onchange="updateCampo('${r.id}','ocupadas',this.value)"></div>
+                    </div>
+                    <div class="field-group" style="margin-bottom:12px;"><label>Nota</label>
+                        <textarea placeholder="Ej: grupo reservado, mal tiempo…" onchange="updateCampo('${r.id}','notas',this.value)">${r.notas||''}</textarea>
+                    </div>
+                    <div class="plazas-meter">
+                        <div class="plazas-meter-top">
+                            <div>
+                                <div class="plazas-disponibles" style="color:${sobre?'var(--red)':cls==='libre'?'var(--green)':cls==='pocos'?'var(--amber)':'var(--red)'}">${lib}</div>
+                                <div class="plazas-label">${sobre?'de más':'plazas libres'}</div>
+                            </div>
+                            <div class="plazas-total">de ${cap} total</div>
+                        </div>
+                        <div class="bar-track"><div class="bar-fill ${cls}" style="width:${pct}%"></div></div>
+                        <span class="estado-pill ${cls}">${label}</span>
+                    </div>
+                    <div class="turno-actions">
+                        <button class="btn btn-danger btn-sm" onclick="eliminarTurno('${r.id}')">✕ Borrar</button>
+                        <span class="saved-tick" id="tick-${r.id}">✓ Guardado</span>
+                    </div>
+                </div>
+            </div>`;
+        }
     });
-    logHistorial('Turnos creados', `${fecha}: 5 turnos estándar`, fecha);
+
+    html+=`<div class="add-card">
+        <button class="btn btn-primary" onclick="agregarTurno('${fecha}')">＋ Añadir turno</button>
+    </div>`;
+
+    document.getElementById('horariosList').innerHTML=html;
+    actualizarTabDot();
+}
+
+function mostrarTickGuardado(id){
+    const tick=document.getElementById('tick-'+id);
+    const card=document.getElementById('card-'+id);
+    if(tick){ tick.classList.add('show'); setTimeout(()=>tick.classList.remove('show'),2000); }
+    if(card){ card.classList.add('saved'); setTimeout(()=>card.classList.remove('saved'),2000); }
+}
+
+async function usarPlantilla(fecha){
+    PLANTILLA.forEach(t=>{ rutasData.push({id:genId(),fecha,horaInicio:t.horaInicio,horaFin:t.horaFin,barcos:1,ocupadas:0,notas:''}); });
+    logHistorial('Turnos creados',`${fecha}: turnos estándar`,fecha);
     toast('Turnos estándar creados ✓');
     renderFormulario();
 }
 
-async function agregarTurno(fecha) {
-    const ini = prompt('Hora de inicio (ej: 10:00):', '09:00');
-    if (!ini) return;
-    const finAuto = sumar2h(ini);
-    const fin = prompt('Hora de fin (se calcula automático, puedes cambiarla):', finAuto);
-    if (!fin) return;
-    rutasData.push({ id: genId(), fecha, horaInicio: ini, horaFin: fin, barcos: 1, ocupadas: 0 });
-    logHistorial('Turno añadido', `${fecha}: ${ini}-${fin}`, fecha);
+async function copiarDiaAnterior(fecha){
+    const d=new Date(fecha+'T12:00:00'); d.setDate(d.getDate()-1);
+    const ayer=d.toISOString().split('T')[0];
+    const turnosAyer=rutasData.filter(r=>r.fecha===ayer);
+    if(!turnosAyer.length){ toast('No hay turnos ayer'); return; }
+    turnosAyer.forEach(t=>{
+        rutasData.push({id:genId(),fecha,horaInicio:t.horaInicio,horaFin:t.horaFin,barcos:t.barcos,ocupadas:0,notas:''});
+    });
+    logHistorial('Turnos copiados',`${fecha}: copiado de ${ayer}`,fecha);
+    toast(`${turnosAyer.length} turnos copiados de ayer ✓`);
+    renderFormulario();
+}
+
+async function agregarTurno(fecha){
+    const ini=prompt('Hora de inicio (ej: 10:00):','09:00');
+    if(!ini) return;
+    const finAuto=sumar2h(ini);
+    const fin=prompt('Hora de fin:',finAuto);
+    if(!fin) return;
+    rutasData.push({id:genId(),fecha,horaInicio:ini,horaFin:fin,barcos:1,ocupadas:0,notas:''});
+    logHistorial('Turno añadido',`${fecha}: ${ini}-${fin}`,fecha);
     toast('Turno añadido ✓');
     renderFormulario();
 }
 
-async function eliminarTurno(id) {
-    const r = rutasData.find(x => x.id === id);
-    if (!r || !confirm(`¿Borrar el turno ${r.horaInicio}-${r.horaFin}?`)) return;
-    rutasData = rutasData.filter(x => x.id !== id);
-    logHistorial('Turno borrado', `${r.fecha}: ${r.horaInicio}-${r.horaFin}`, r.fecha);
+async function eliminarTurno(id){
+    const r=rutasData.find(x=>x.id===id);
+    if(!r||!confirm(`¿Borrar el turno ${r.horaInicio}-${r.horaFin}?`)) return;
+    rutasData=rutasData.filter(x=>x.id!==id);
+    logHistorial('Turno borrado',`${r.fecha}: ${r.horaInicio}-${r.horaFin}`,r.fecha);
     toast('Turno borrado');
     renderFormulario();
 }
 
-async function updateCampo(id, campo, valor) {
-    const r = rutasData.find(x => x.id === id);
-    if (!r) return;
-    const ant = r[campo];
-    r[campo] = (campo === 'barcos' || campo === 'ocupadas') ? parseInt(valor) : valor;
-    if (campo === 'horaInicio' && valor) r.horaFin = sumar2h(valor);
-    const cap = r.barcos * PLAZAS_POR_BARCO;
-    if (r.ocupadas > cap) r.ocupadas = cap;
-    logHistorial(`Actualización`, `${r.fecha} ${r.horaInicio}-${r.horaFin}: ${campo} ${ant}→${r[campo]}`, r.fecha);
-    toast('Guardado ✓');
+async function updateCampo(id,campo,valor){
+    const r=rutasData.find(x=>x.id===id);
+    if(!r) return;
+    const ant=r[campo];
+    r[campo]=(campo==='barcos'||campo==='ocupadas')?parseInt(valor):valor;
+    if(campo==='horaInicio'&&valor) r.horaFin=sumar2h(valor);
+    guardar();
+    logHistorial('Actualización',`${r.fecha} ${r.horaInicio}-${r.horaFin}: ${campo} ${ant}→${r[campo]}`,r.fecha);
+    mostrarTickGuardado(id);
+    actualizarTabDot();
+    // re-render solo la tarjeta para no perder el foco
     renderFormulario();
 }
 
-function resetFecha() {
-    document.getElementById('fechaInput').value = new Date().toISOString().split('T')[0];
-    renderFormulario();
-}
+// ── DASHBOARD ──
+function renderDashboard(){
+    // filtro de hoy por defecto si no hay nada seleccionado
+    const ff=document.getElementById('filtroFecha');
+    if(!ff.value) ff.value=hoy();
 
-// ── EDU: DASHBOARD ──
-function renderDashboard() {
-    let totalR=0, totalO=0, totalD=0;
-    rutasData.forEach(r => {
+    let totalR=0,totalO=0,totalD=0;
+    rutasData.forEach(r=>{
         totalR++;
-        totalO += r.ocupadas;
-        totalD += (r.barcos * PLAZAS_POR_BARCO) - r.ocupadas;
+        totalO+=r.ocupadas;
+        totalD+=(r.barcos*PLAZAS_POR_BARCO)-r.ocupadas;
     });
-    const cap = rutasData.reduce((s,r) => s + r.barcos * PLAZAS_POR_BARCO, 0);
-    const tasa = cap > 0 ? Math.round((totalO / cap) * 100) : 0;
-
-    document.getElementById('kpiRutas').textContent = totalR;
-    document.getElementById('kpiDisp').textContent  = totalD;
-    document.getElementById('kpiOcup').textContent  = totalO;
-    document.getElementById('kpiTasa').textContent  = tasa + '%';
-
+    const cap=rutasData.reduce((s,r)=>s+r.barcos*PLAZAS_POR_BARCO,0);
+    const tasa=cap>0?Math.round((totalO/cap)*100):0;
+    document.getElementById('kpiRutas').textContent=totalR;
+    document.getElementById('kpiDisp').textContent=totalD;
+    document.getElementById('kpiOcup').textContent=totalO;
+    document.getElementById('kpiTasa').textContent=tasa+'%';
     renderTabla();
 }
 
-function renderTabla() {
-    const ff = document.getElementById('filtroFecha').value;
-    const fe = document.getElementById('filtroEstado').value;
-
-    let rows = rutasData.filter(r => {
-        if (ff && r.fecha !== ff) return false;
-        const cap = r.barcos * PLAZAS_POR_BARCO;
-        const lib = cap - r.ocupadas;
-        if (fe === 'libre'  && lib === 0)  return false;
-        if (fe === 'lleno'  && lib > 0)    return false;
-        if (fe === 'pocos'  && lib > 3)    return false;
+function renderTabla(){
+    const ff=document.getElementById('filtroFecha').value;
+    const fe=document.getElementById('filtroEstado').value;
+    let rows=rutasData.filter(r=>{
+        if(ff&&r.fecha!==ff) return false;
+        const cap=r.barcos*PLAZAS_POR_BARCO, lib=cap-r.ocupadas;
+        if(fe==='libre'&&lib===0) return false;
+        if(fe==='lleno'&&lib>0)  return false;
+        if(fe==='pocos'&&lib>3)  return false;
         return true;
-    }).sort((a,b) => a.fecha.localeCompare(b.fecha) || a.horaInicio.localeCompare(b.horaInicio));
+    }).sort((a,b)=>a.fecha.localeCompare(b.fecha)||a.horaInicio.localeCompare(b.horaInicio));
 
-    const tbody = document.getElementById('tablaBody');
+    const tbody=document.getElementById('tablaBody');
+    if(!rows.length){ tbody.innerHTML='<tr><td colspan="8" class="table-empty">Sin resultados</td></tr>'; return; }
 
-    if (rows.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="table-empty">Sin resultados</td></tr>';
-        return;
-    }
-
-    tbody.innerHTML = rows.map(r => {
-        const cap  = r.barcos * PLAZAS_POR_BARCO;
-        const lib  = cap - r.ocupadas;
-        const pct  = Math.round((r.ocupadas / cap) * 100);
-        const cls  = lib===0 ? 'red' : lib<=3 ? 'amber' : 'green';
-        const lbl  = lib===0 ? '✕ Lleno' : lib<=3 ? '⚠ Pocos' : '✓ Libre';
-        const fecha = (() => {
-            const d = new Date(r.fecha + 'T12:00:00');
-            return d.toLocaleDateString('es-ES', { weekday:'short', day:'numeric', month:'short' });
-        })();
-        return `
-        <tr>
+    tbody.innerHTML=rows.map(r=>{
+        const cap=r.barcos*PLAZAS_POR_BARCO, lib=cap-r.ocupadas;
+        const pct=Math.min(Math.round((r.ocupadas/cap)*100),100);
+        const cls=lib<=0?'red':lib<=3?'amber':'green';
+        const lbl=lib<=0?'✕ Lleno':lib<=3?'⚠ Pocos':'✓ Libre';
+        const fecha=new Date(r.fecha+'T12:00:00').toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'});
+        return `<tr>
             <td><strong>${fecha}</strong></td>
             <td style="white-space:nowrap">${r.horaInicio} – ${r.horaFin}</td>
             <td>${r.barcos}</td>
             <td style="white-space:nowrap"><strong>${lib}</strong> / ${cap}</td>
-            <td>
-                <div class="mini-bar"><div class="mini-fill" style="width:${pct}%"></div></div>
-                <span style="font-size:11px;color:var(--text2)">${pct}%</span>
-            </td>
+            <td><div class="mini-bar"><div class="mini-fill" style="width:${pct}%"></div></div><span style="font-size:11px;color:var(--text2)">${pct}%</span></td>
             <td><span class="pill pill-${cls}">${lbl}</span></td>
-            <td>
-                <div class="row-actions">
-                    <button class="btn btn-ghost" style="padding:6px 10px;font-size:12px" onclick="abrirModal('${r.id}')">Editar</button>
-                    <button class="btn btn-danger" style="padding:6px 10px;font-size:12px" onclick="eliminarRuta('${r.id}')">✕</button>
-                </div>
-            </td>
+            <td style="font-size:12px;color:var(--text2);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.notas||'—'}</td>
+            <td><div class="row-actions">
+                <button class="btn btn-ghost btn-sm" onclick="abrirModalEditar('${r.id}')">Editar</button>
+                <button class="btn btn-danger btn-sm" onclick="eliminarRuta('${r.id}')">✕</button>
+            </div></td>
         </tr>`;
     }).join('');
 }
 
-async function eliminarRuta(id) {
-    const r = rutasData.find(x => x.id === id);
-    if (!r || !confirm('¿Eliminar esta ruta?')) return;
-    rutasData = rutasData.filter(x => x.id !== id);
-    logHistorial('Eliminada', `${r.fecha} ${r.horaInicio}-${r.horaFin}`, r.fecha);
+async function eliminarRuta(id){
+    const r=rutasData.find(x=>x.id===id);
+    if(!r||!confirm('¿Eliminar esta ruta?')) return;
+    rutasData=rutasData.filter(x=>x.id!==id);
+    logHistorial('Eliminada',`${r.fecha} ${r.horaInicio}-${r.horaFin}`,r.fecha);
     toast('Ruta eliminada');
     renderDashboard();
 }
 
-// ── MODAL ──
-function abrirModal(id) {
-    const r = rutasData.find(x => x.id === id);
-    if (!r) return;
-    editId = id;
-    document.getElementById('mFecha').value    = r.fecha;
-    document.getElementById('mInicio').value   = r.horaInicio;
-    document.getElementById('mFin').value      = r.horaFin;
-    document.getElementById('mBarcos').value   = r.barcos;
-    document.getElementById('mOcupadas').value = r.ocupadas;
+// ── MODAL EDITAR ──
+function abrirModalEditar(id){
+    const r=rutasData.find(x=>x.id===id); if(!r) return;
+    editId=id;
+    document.getElementById('mFecha').value=r.fecha;
+    document.getElementById('mInicio').value=r.horaInicio;
+    document.getElementById('mFin').value=r.horaFin;
+    document.getElementById('mBarcos').value=r.barcos;
+    document.getElementById('mOcupadas').value=r.ocupadas;
+    document.getElementById('mNota').value=r.notas||'';
     document.getElementById('editModal').classList.add('active');
 }
-
-function cerrarModal() {
-    document.getElementById('editModal').classList.remove('active');
-    editId = null;
+function cerrarModal(){ document.getElementById('editModal').classList.remove('active'); editId=null; }
+async function guardarEdicion(){
+    const r=rutasData.find(x=>x.id===editId); if(!r) return;
+    r.horaInicio=document.getElementById('mInicio').value;
+    r.horaFin=document.getElementById('mFin').value;
+    r.barcos=parseInt(document.getElementById('mBarcos').value);
+    r.ocupadas=parseInt(document.getElementById('mOcupadas').value);
+    r.notas=document.getElementById('mNota').value;
+    logHistorial('Edición manual',`${r.fecha} ${r.horaInicio}-${r.horaFin}`,r.fecha);
+    cerrarModal(); toast('Guardado ✓');
+    renderDashboard(); renderFormulario(); actualizarTabDot();
 }
 
-async function guardarEdicion() {
-    const r = rutasData.find(x => x.id === editId);
-    if (!r) return;
-    r.horaInicio = document.getElementById('mInicio').value;
-    r.horaFin    = document.getElementById('mFin').value;
-    r.barcos     = parseInt(document.getElementById('mBarcos').value);
-    r.ocupadas   = parseInt(document.getElementById('mOcupadas').value);
-    const cap = r.barcos * PLAZAS_POR_BARCO;
-    if (r.ocupadas > cap) r.ocupadas = cap;
-    logHistorial('Edición manual', `${r.fecha} ${r.horaInicio}-${r.horaFin}`, r.fecha);
-    cerrarModal();
-    toast('Guardado ✓');
-    renderDashboard();
+// ── WHATSAPP ──
+function abrirModalWA(){
+    document.getElementById('waFecha').value=document.getElementById('filtroFecha').value||hoy();
+    generarTextoWA();
+    document.getElementById('waModal').classList.add('active');
+}
+function cerrarWA(){ document.getElementById('waModal').classList.remove('active'); }
+function generarTextoWA(){
+    const fecha=document.getElementById('waFecha').value;
+    const turnos=rutasData.filter(r=>r.fecha===fecha).sort((a,b)=>a.horaInicio.localeCompare(b.horaInicio));
+    if(!turnos.length){ document.getElementById('waTexto').value='No hay turnos para esta fecha.'; return; }
+    const fechaFmt=new Date(fecha+'T12:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});
+    let txt=`🚤 *Disponibilidad rutas ${fechaFmt}*\n\n`;
+    turnos.forEach(r=>{
+        const cap=r.barcos*PLAZAS_POR_BARCO, lib=cap-r.ocupadas;
+        const emoji=lib<=0?'🔴':lib<=3?'🟡':'🟢';
+        txt+=`${emoji} ${r.horaInicio}–${r.horaFin}  `;
+        txt+=lib<=0?`COMPLETO`:`${lib} plaza${lib!==1?'s':''} libre${lib!==1?'s':''}`;
+        if(r.notas) txt+=`  _(${r.notas})_`;
+        txt+='\n';
+    });
+    document.getElementById('waTexto').value=txt.trim();
+}
+function copiarWA(){
+    const txt=document.getElementById('waTexto').value;
+    navigator.clipboard.writeText(txt).then(()=>toast('¡Copiado! Pégalo en WhatsApp ✓')).catch(()=>{
+        document.getElementById('waTexto').select();
+        document.execCommand('copy');
+        toast('¡Copiado!');
+    });
 }
 
 // ── HISTORIAL ──
-function irAFecha(fecha) {
-    document.getElementById('fechaInput').value = fecha;
-    const btn = document.querySelector('.tab-btn');
-    cambiarTab('angel', btn);
+function irAFecha(fecha){
+    document.getElementById('fechaInput').value=fecha;
+    const btn=document.querySelector('.tab-btn');
+    cambiarTab('angel',btn);
     renderFormulario();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({top:0,behavior:'smooth'});
 }
-
-function renderHistorial() {
-    const el = document.getElementById('histList');
-    if (historial.length === 0) {
-        el.innerHTML = '<p style="color:var(--text2);font-size:14px;text-align:center;padding:32px">Sin cambios registrados</p>';
-        return;
-    }
-    el.innerHTML = `<div class="hist-list">${historial.map(h => {
-        const clickable = !!h.fechaRuta;
-        const onclick = clickable ? `onclick="irAFecha('${h.fechaRuta}')"` : '';
-        const cls = clickable ? '' : 'no-link';
-        const fechaFormato = h.fechaRuta
-            ? new Date(h.fechaRuta + 'T12:00:00').toLocaleDateString('es-ES', { weekday:'short', day:'numeric', month:'short', year:'numeric' })
-            : '';
-        return `
-        <div class="hist-item ${cls}" ${onclick}>
+function renderHistorial(){
+    const el=document.getElementById('histList');
+    if(!historial.length){ el.innerHTML='<p style="color:var(--text2);font-size:14px;text-align:center;padding:32px">Sin cambios registrados</p>'; return; }
+    el.innerHTML=`<div class="hist-list">${historial.map(h=>{
+        const clickable=!!h.fechaRuta;
+        const onclick=clickable?`onclick="irAFecha('${h.fechaRuta}')"` :'';
+        const cls=clickable?'':'no-link';
+        const fechaFmt=h.fechaRuta?new Date(h.fechaRuta+'T12:00:00').toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short',year:'numeric'}):'';
+        return `<div class="hist-item ${cls}" ${onclick}>
             <div class="hist-accion">${h.accion}</div>
             <div class="hist-detalle">${h.detalles}</div>
             <div class="hist-fecha">${h.fecha}</div>
-            ${clickable ? `<div class="hist-ir">✏️ Ir a editar · ${fechaFormato} →</div>` : ''}
+            ${clickable?`<div class="hist-ir">✏️ Ir a editar · ${fechaFmt} →</div>`:''}
         </div>`;
     }).join('')}</div>`;
 }
 
 // ── PWA ──
-let deferredPrompt = null;
-
-window.addEventListener('beforeinstallprompt', e => {
-    e.preventDefault();
-    deferredPrompt = e;
-    document.getElementById('installBanner').classList.add('visible');
-});
-
-function installApp() {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(() => {
-        deferredPrompt = null;
-        document.getElementById('installBanner').classList.remove('visible');
-    });
-}
-
-window.addEventListener('appinstalled', () => {
-    document.getElementById('installBanner').classList.remove('visible');
-});
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); deferredPrompt=e; document.getElementById('installBanner').classList.add('visible'); });
+function installApp(){ if(!deferredPrompt) return; deferredPrompt.prompt(); deferredPrompt.userChoice.then(()=>{ deferredPrompt=null; document.getElementById('installBanner').classList.remove('visible'); }); }
+window.addEventListener('appinstalled',()=>document.getElementById('installBanner').classList.remove('visible'));
 
 // ── INIT ──
-window.addEventListener('load', () => {
-    cargar();
-    initAngel();
-    renderDashboard();
-});
+window.addEventListener('load',()=>{ cargar(); initAngel(); renderDashboard(); actualizarTabDot(); });
 </script>
 </body>
 </html>
