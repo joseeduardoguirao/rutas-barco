@@ -789,7 +789,7 @@ function renderFormulario(){
                         <input type="tel" placeholder="Teléfono" id="rt-${turno.id}" autocomplete="off">
                     </div>
                     <div class="form-row">
-                        <input type="number" min="1" max="30" placeholder="Personas" id="rp-${turno.id}" class="pers-input" style="width:100%">
+                        <input type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Personas" id="rp-${turno.id}" class="pers-input" style="width:100%">
                     </div>
                     <button class="btn btn-primary btn-wide" onclick="añadirReserva('${turno.id}')">＋ Añadir reserva</button>
                 </div>`}
